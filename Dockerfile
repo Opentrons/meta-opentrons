@@ -66,3 +66,6 @@ RUN repo sync
 RUN . $BUILD_INPUT_DIR/export
 
 CMD echo "ACCEPT_FSL_EULA = \"1\"" >> $BUILD_OUTPUT_DIR/conf/local.conf
+CMD sed -i '/#MACHINE ?= "verdin-imx8mm"/c\MACHINE ?= "verdin-imx8mm"' $BUILD_OUTPUT_DIR/conf/local.conf
+CMD sed -i '/MACHINE ?= "colibri-imx6"/c\#MACHINE ?= "colbri-imx6"' $BUILD_OUTPUT_DIR_conf/local.conf
+
