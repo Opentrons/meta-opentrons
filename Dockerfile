@@ -1,4 +1,13 @@
- Use Ubuntu 16.04 LTS as the basis for the Docker image.
+# In any directory on the docker host, perform the following actions:
+#   * Copy this Dockerfile in the directory.
+#   * Create input and output directories: mkdir -p oe-core oe-core/build
+#   * Build the Docker image with the following command:
+#     docker build --no-cache --build-arg "host_uid=$(id -u)" --build-arg "host_gid=$(id -g)" \
+#         --tag "ot3-image:latest" .
+#   * Run the Docker image, which in turn runs the Yocto and which produces the Linux rootfs,
+#     with the following command:
+#     docker run -it --rm -v $PWD/oe-core/build:/home/ot3/oe-core/build ot3-image:latest
+# Use Ubuntu 16.04 LTS as the basis for the Docker image.
 FROM ubuntu:16.04
 
 # Install all the Linux packages required for Yocto / Toradex BSP builds. Note that the packages python3,
