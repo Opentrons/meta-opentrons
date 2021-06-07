@@ -1,23 +1,13 @@
-# In any directory on the docker host, perform the following actions:
-#   * Copy this Dockerfile in the directory.
-#   * Create input and output directories: mkdir -p oe-core oe-core/build
-#   * Build the Docker image with the following command:
-#     docker build --no-cache --build-arg "host_uid=$(id -u)" --build-arg "host_gid=$(id -g)" \
-#         --tag "ot3-image:latest" .
-#   * Run the Docker image, which in turn runs the Yocto and which produces the Linux rootfs,
-#     with the following command:
-#     docker run -it --rm -v $PWD/oe-core/build:/home/ot3/oe-core/build ot3-image:latest
 # Use Ubuntu 16.04 LTS as the basis for the Docker image.
 FROM ubuntu:16.04
 
 # Install all the Linux packages required for Yocto / Toradex BSP builds. Note that the packages python3,
 # tar, locales and cpio are not listed in the official Yocto / Toradex BSP documentation. The build, however, fails
-# without them. curl is used for brining in the repo tool. repo tool uses git, so thats being installed here as well.
+# without them. curl is used for brining in the repo tool. repo tool uses git, so thats being instaled here aswell.
 RUN apt-get update && apt-get -y install gawk wget git-core diffstat unzip texinfo gcc-multilib \
      build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
      xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
      pylint3 xterm tar locales curl git
-# repo tool like python3.6
 RUN apt-get -y install software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get -y update && \
@@ -47,7 +37,7 @@ RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u 
 
 
 
-# Perform the Yocto build as user ot3  (not as root).
+# Perform the Yocto build as user cuteradio (not as root).
 # NOTE: The USER command does not set the environment variable HOME.
 
 # By default, docker runs as root. However, Yocto builds should not be run as root, but as a 
@@ -65,16 +55,16 @@ RUN mkdir -p $BUILD_INPUT_DIR $BUILD_OUTPUT_DIR
 
 WORKDIR $BUILD_INPUT_DIR
 
-#bring in repo tool
-RUN mkdir bin
-ENV PATH="bin:${PATH}"
+RUN mkdir bin 
+ENV PATH="bin:${PATH}" 
 RUN curl https://commondatastorage.googleapis.com/git-repo-downloads/repo > bin/repo && \
     chmod a+x bin/repo
-RUN repo init -u https://git.toradex.com/toradex-manifest.git -b dunfell-5.x.y -m tdxref/default.xml
+RUN repo init -u https://git.toradex.com/toradex-manifest.git -b dunfell-5.x.y -m tdxref/default.xml 
 RUN repo sync
-RUN . $BUILD_INPUT_DIR/export
 
-CMD echo "ACCEPT_FSL_EULA = \"1\"" >> $BUILD_OUTPUT_DIR/conf/local.conf
-CMD sed -i '/#MACHINE ?= "verdin-imx8mm"/c\MACHINE ?= "verdin-imx8mm"' $BUILD_OUTPUT_DIR/conf/local.conf
-CMD sed -i '/MACHINE ?= "colibri-imx6"/c\#MACHINE ?= "colbri-imx6"' $BUILD_OUTPUT_DIR_conf/local.conf
-
+ADD start.sh /home/ot3/start.sh
+USER root
+RUN chown -R $USER_NAME:$USER_NAME /home/ot3/start.sh
+RUN chmod a+x /home/ot3/start.sh
+USER $USER_NAME
+CMD /home/ot3/start.sh
