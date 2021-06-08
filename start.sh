@@ -1,4 +1,5 @@
 #! /bin/sh
+rm -f /home/ot3/oe-core/build/tmp
 rm -f /home/ot3/oe-core/build/tmp-glibc
 rm -rf /home/ot3/oe-core/build/deploy
 source /home/ot3/oe-core/export
