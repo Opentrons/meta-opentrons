@@ -1,9 +1,14 @@
 # Use Ubuntu 16.04 LTS as the basis for the Docker image.
-FROM ubuntu:16.04
+
+FROM ubuntu:20.04
+
+# Set timezone:
+RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
 # Install all the Linux packages required for Yocto / Toradex BSP builds. Note that the packages python3,
 # tar, locales and cpio are not listed in the official Yocto / Toradex BSP documentation. The build, however, fails
 # without them. curl is used for brining in the repo tool. repo tool uses git, so thats being instaled here aswell.
+
 RUN apt-get update && apt-get -y install gawk wget git-core diffstat unzip texinfo gcc-multilib \
      build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
      xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
@@ -38,7 +43,6 @@ RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u 
 
 
 # Perform the Yocto build as user ot3 (not as root).
-
 # NOTE: The USER command does not set the environment variable HOME.
 
 # By default, docker runs as root. However, Yocto builds should not be run as root, but as a 
