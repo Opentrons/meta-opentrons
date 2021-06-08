@@ -37,7 +37,8 @@ RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u 
 
 
 
-# Perform the Yocto build as user cuteradio (not as root).
+# Perform the Yocto build as user ot3 (not as root).
+
 # NOTE: The USER command does not set the environment variable HOME.
 
 # By default, docker runs as root. However, Yocto builds should not be run as root, but as a 
