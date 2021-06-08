@@ -23,5 +23,8 @@ mkdir -p oe-core/build
 
 curl 'https://raw.githubusercontent.com/Opentrons/meta-opentrons/${branch}/Dockerfile' > DockerFile
 curl 'https://raw.githubusercontent.com/Opentrons/meta-opentrons/${branch}/start.sh' > start.sh
+
+docker build --no-cache --build-arg "host_uid=$(id -u)"   --build-arg "host_gid=$(id -g)" --tag "ot3-image:latest" .
+
 docker run -it --rm -v $PWD/oe-core/build:/home/ot3/oe-core/build/deploy ot3-image:latest
 
