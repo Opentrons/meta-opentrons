@@ -68,12 +68,12 @@ RUN repo init -u https://git.toradex.com/toradex-manifest.git -b dunfell-5.x.y -
 RUN repo sync
 
 ADD start.sh /home/ot3/start.sh
-ADD linux/linux-toradex_5.4-2.3.x.patch /home/ot3/oe-core/build/linux-toradex_5.4-2.3.x.patch
+ADD linux-toradex_5.4-2.3.x.patch /home/ot3/linux-toradex_5.4-2.3.x.patch
 USER root
 RUN chown -R $USER_NAME:$USER_NAME /home/ot3/start.sh
 RUN chmod a+x /home/ot3/start.sh
-RUN chown -R $USER_NAME:$USER_NAME /home/ot3/oe-core/build/linux-toradex_5.4-2.3.x.patch
-RUN chmod a+x /home/ot3/oe-core/build/linux-toradex_5.4-2.3.x.patch
+RUN chown -R $USER_NAME:$USER_NAME /home/ot3/linux-toradex_5.4-2.3.x.patch
+RUN chmod a+x /home/ot3/linux-toradex_5.4-2.3.x.patch
 
 USER $USER_NAME
 CMD /home/ot3/start.sh
