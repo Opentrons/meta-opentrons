@@ -1,43 +1,8 @@
---- oe-core-faulty/layers/meta-toradex-nxp/recipes-kernel/linux/linux-toradex_5.4-2.3.x.bb	2021-06-11 13:15:27.526030783 +0000
-+++ oe-core/layers/meta-toradex-nxp/recipes-kernel/linux/linux-toradex_5.4-2.3.x.bb	2021-06-10 14:43:38.659486270 +0000
-@@ -7,14 +7,14 @@
- LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
- 
- SRC_URI = " \
--    git://git.toradex.com/linux-toradex.git;protocol=https;branch=${SRCBRANCH};name=machine \
-+    git://git.toradex.com/linux-toradex.git;protocol=http;branch=${SRCBRANCH};name=machine \
- "
- 
- # Load USB functions configurable through configfs (CONFIG_USB_CONFIGFS)
- KERNEL_MODULE_AUTOLOAD += "${@bb.utils.contains('COMBINED_FEATURES', 'usbgadget', ' libcomposite', '',d)}"
- 
- inherit toradex-kernel-localversion
--LINUX_VERSION = "5.4.115"
-+LINUX_VERSION = "5.4.91"
- # skip, as with use-head-next LINUX_VERSION might be set wrongly
- KERNEL_VERSION_SANITY_SKIP_use-head-next = "1"
- 
-@@ -22,7 +22,7 @@
- LOCALVERSION = "-${TDX_VERSION}"
- 
- SRCBRANCH = "toradex_5.4-2.3.x-imx"
--SRCREV_machine = "64dbf17bb33e10d844b01fd7294104cd4f1b8c5b"
-+SRCREV_machine = "2dd6306225361e47a9ef40f6a81a5487920a09ab"
- SRCREV_machine_use-head-next = "${AUTOREV}"
- 
- DEPENDS += "lzop-native bc-native"
-@@ -43,7 +43,7 @@
- # both possible storage locations.
- MIRRORS_append_preempt-rt = "${KERNELORG_MIRROR}/linux/kernel/projects/rt/5.4/older/ ${KERNELORG_MIRROR}/linux/kernel/projects/rt/5.4/"
- SRC_URI_append_preempt-rt = " \
--    ${KERNELORG_MIRROR}/linux/kernel/projects/rt/5.4/older/patch-5.4.115-rt57.patch.xz;name=rt-patch \
-+    ${KERNELORG_MIRROR}/linux/kernel/projects/rt/5.4/older/patch-5.4.91-rt50.patch.xz;name=rt-patch \
-     file://preempt-rt.scc \
-     file://preempt-rt-less-latency.scc \
- "
-@@ -53,4 +53,4 @@
- #    file://0002-ddr-perf-prevent-BUG-with-rt-patch.patch \
- #
- 
--SRC_URI[rt-patch.sha256sum] = "133c73625664f72702e85fc037e9a4169e16c9b45444af1c9416157c44ec07f6"
-+SRC_URI[rt-patch.sha256sum] = "3152fac82ee4357f89035736de707545b36b1816536d17cc76bd830b488a2923"
+10c10
+<     git://git.toradex.com/linux-toradex.git;protocol=https;branch=${SRCBRANCH};name=machine \
+---
+>     git://git.toradex.com/linux-toradex.git;protocol=http;branch=${SRCBRANCH};name=machine \
+25c25
+< SRCREV_machine = "64dbf17bb33e10d844b01fd7294104cd4f1b8c5b"
+---
+> SRCREV_machine = "2dd6306225361e47a9ef40f6a81a5487920a09ab"
