@@ -10,6 +10,7 @@ on:
 jobs:
   build-image:
     name: 'build ot3 image'
+    runs-on: 'ubuntu-20.04'
     steps:
       - uses: 'actions/checkout@v2'
       - uses: './.github/actions/openembedded-build'
