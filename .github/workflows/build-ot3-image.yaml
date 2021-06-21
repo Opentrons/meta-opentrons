@@ -20,7 +20,7 @@ jobs:
           cp ../start.sh ./
           cp ../Dockerfile ./
           cp ../*.patch ./
-          docker build --tag "ot3-image:latest" ./Dockerfile
+          docker build --tag "ot3-image:latest"
       - name: 'build ot3 image'
         run: |
           cd docker
