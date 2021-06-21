@@ -1,0 +1,19 @@
+# This workflow builds an ot3 image
+
+name: 'Build OT3 image'
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build-image:
+    name: 'build ot3 image'
+    steps:
+      - uses: 'actions/checkout@v2'
+      - uses: './.github/actions/openembedded-build'
+      - uses: 'actions/upload-artifact@v2'
+        with:
+          name: 'ot3-image'
+          path: '/home/ot3/oe-core/build/*'
