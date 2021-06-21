@@ -23,7 +23,7 @@ jobs:
       - name: 'build ot3 image'
         run: |
           cd docker
-          docker run -it --rm -v $PWD/oe-core/build:/home/ot3/oe-core/build/deploy ot3-image:latest
+          docker run --rm -v $PWD/oe-core/build:/home/ot3/oe-core/build/deploy ot3-image:latest
       - uses: 'actions/upload-artifact@v2'
         with:
           name: 'ot3-image'
