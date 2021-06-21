@@ -15,8 +15,6 @@ SRC_URI[sha256sum] = "8359e55d8412a5571c0736013d90af235d6949ec4ce978e9b63500c8f4
 SRC_URI[sha384sum] = "8d96c8a504f4af09d3d734e80796c77f5b42d67afd890c433aca221df0e9d4a1cdc41ea260f253040996de38e44332e4"
 SRC_URI[sha512sum] = "d3f6f08de74ab2edab56e4de5cbb7106807cdcb17c5e635a18ce1825cb7a359b13100b8a591b0b8f1151655db424116001d8f885d66cd6b2e45d1897486a6097"
 
-S = "${WORKDIR}/fastapi-${PV}"
-
 inherit distutils3 pypi
 
 # WARNING: the following rdepends are determined through basic analysis of the
