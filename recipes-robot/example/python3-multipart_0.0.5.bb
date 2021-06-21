@@ -19,6 +19,8 @@ SRC_URI[sha256sum] = "f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c
 SRC_URI[sha384sum] = "8fc5d7b34a15c0468394752fa8ea47f76808bca61523f57631efe556f15e892e87c5e2eb2954e2059bd7a4dca24fc0a9"
 SRC_URI[sha512sum] = "159472175c7b21ddcfb6d026d2efe1dc68ceacb6b30afef7f2aab078542eef6faf61d7e40abb2d22d18346c88e2fbee12283795f3e4a8b1f36673a5dd9163a8e"
 
+S = "${WORKDIR}/python-multipart-${PV}"
+
 inherit setuptools3 pypi
 
 # WARNING: the following rdepends are from setuptools install_requires. These
