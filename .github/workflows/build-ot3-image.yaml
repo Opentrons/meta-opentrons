@@ -16,11 +16,10 @@ jobs:
       - name: 'build docker image'
         run: |
           mkdir -p docker/oe-core/build
-          cd docker
-          cp ../start.sh ./
-          cp ../Dockerfile ./
-          cp ../*.patch ./
-          docker build --tag "ot3-image:latest"
+          cp ./start.sh ./docker
+          cp ./Dockerfile ./docker
+          cp ./*.patch ./docker
+          docker build --tag "ot3-image:latest" ./docker
       - name: 'build ot3 image'
         run: |
           cd docker
