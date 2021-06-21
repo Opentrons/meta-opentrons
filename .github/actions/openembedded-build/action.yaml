@@ -2,4 +2,4 @@ name: 'Openembedded Build'
 description: 'Build an OE project using the dockerfile in this repo'
 runs:
   using: 'docker'
-  image: './Dockerfile'
+  image: '../../../Dockerfile'
