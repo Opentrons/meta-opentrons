@@ -14,18 +14,10 @@ PV = "1.0+git${SRCPV}"
 SRCREV = "30902cc8b2c664aa894f91ab7bb2eaafdefc705a"
 
 inherit setuptools3
+RDEPENDS_${PN} += "python3-fastapi python3-multipart python3-dotenv python3-wsproto python3-typing-extensions"
 S = "${WORKDIR}/git"
-FILESEXTRAPATHS_prepend := "${THISDIR}:"
-do_configure(){
-	:
-}
-do_compile(){
-	:
-}
-
-do_install(){
-	:
-}
+DISTUTILS_SETUP_PATH = "${S}/robot-server/"
+#FILESEXTRAPATHS_prepend := "${THISDIR}:"
 
 
 
