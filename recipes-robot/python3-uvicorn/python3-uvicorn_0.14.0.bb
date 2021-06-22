@@ -13,7 +13,6 @@ HOMEPAGE = "https://github.com/encode/uvicorn"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://LICENSE.md;md5=206119e27d6b034e7ce70d73063c82a8"
 
-SRC_URI = "https://files.pythonhosted.org/packages/e9/9e/25d59f5043cf763833b2581c8027fa92342c4cf8ee523b498ecdf460c16d/uvicorn-${PV}.tar.gz"
 SRC_URI[md5sum] = "f5abf722d60d4709f94dfd2614dfa5ce"
 SRC_URI[sha1sum] = "006af749fadc976cfdf19d7c86f9c1be15ab873a"
 SRC_URI[sha256sum] = "45ad7dfaaa7d55cab4cd1e85e03f27e9d60bc067ddc59db52a2b0aeca8870292"
@@ -22,7 +21,7 @@ SRC_URI[sha512sum] = "4a7cd5af623f19957546ce44594adf5c30fbd77c0649b77544630445e1
 
 S = "${WORKDIR}/uvicorn-${PV}"
 
-inherit setuptools3
+inherit setuptools3 pypi
 
 # The following configs & dependencies are from setuptools extras_require.
 # These dependencies are optional, hence can be controlled via PACKAGECONFIG.
