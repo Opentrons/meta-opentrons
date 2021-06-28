@@ -13,7 +13,6 @@ HOMEPAGE = "https://github.com/theskumar/python-dotenv"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=55ee2c3471d386636a719c8ccac40b31"
 
-SRC_URI = "https://files.pythonhosted.org/packages/7a/1c/4dbbae00fc9a3bc605fc2d92dc0e197fcf0b6e0357d217d1819afe8206af/python-dotenv-${PV}.tar.gz"
 SRC_URI[md5sum] = "87e2bcc039142b4408337eddb210462a"
 SRC_URI[sha1sum] = "fe1933c49c953ef446a0bdf35c6a099a31745a09"
 SRC_URI[sha256sum] = "effaac3c1e58d89b3ccb4d04a40dc7ad6e0275fda25fd75ae9d323e2465e202d"
@@ -33,10 +32,11 @@ PACKAGECONFIG[cli] = ",,,python3-click"
 
 # WARNING: the following rdepends are from setuptools install_requires. These
 # upstream names may not correspond exactly to bitbake package names.
+RDEPENDS_${PN} += "python3-typing;"
 
 # WARNING: the following rdepends are determined through basic analysis of the
 # python sources, and might not be 100% accurate.
-RDEPENDS_${PN} += "python3-core python3-io python3-logging"
+RDEPENDS_${PN} += "python3-core python3-io python3-logging python3-typing"
 
 # WARNING: We were unable to map the following python package/module
 # dependencies to the bitbake packages which include them:

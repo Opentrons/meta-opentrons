@@ -11,14 +11,9 @@ SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-SRCREV = "30902cc8b2c664aa894f91ab7bb2eaafdefc705a"
-
-inherit setuptools3
-RDEPENDS_${PN} += "python3-fastapi python3-multipart python3-dotenv python3-wsproto python3-typing-extensions python3-starlette python3-pydantic python3-sniffio"
+SRCREV = "fe4d6db248b2444506e839005e54bf4475d1bdc8"
+RDEPENDS_${PN} += "python3-jsonschema"
 S = "${WORKDIR}/git"
-DISTUTILS_SETUP_PATH = "${S}/robot-server/"
-#FILESEXTRAPATHS_prepend := "${THISDIR}:"
 
-
-
-
+DISTUTILS_SETUP_PATH = "${S}/shared-data/python"
+inherit setuptools3

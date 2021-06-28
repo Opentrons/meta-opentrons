@@ -7,18 +7,10 @@
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
-SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
+SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https"
 
 # Modify these as desired
-PV = "1.0+git${SRCPV}"
-SRCREV = "30902cc8b2c664aa894f91ab7bb2eaafdefc705a"
-
-inherit setuptools3
-RDEPENDS_${PN} += "python3-fastapi python3-multipart python3-dotenv python3-wsproto python3-typing-extensions python3-starlette python3-pydantic python3-sniffio"
-S = "${WORKDIR}/git"
-DISTUTILS_SETUP_PATH = "${S}/robot-server/"
-#FILESEXTRAPATHS_prepend := "${THISDIR}:"
-
-
-
-
+SRCREV = "bf8fbe8a98c14061af8d5bbb22d7a6b95a25eaab"                                                 
+inherit setuptools3                                                                                
+S = "${WORKDIR}/git"                                                                                
+DISTUTILS_SETUP_PATH = "${S}/update-server" 
