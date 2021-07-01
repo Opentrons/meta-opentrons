@@ -24,7 +24,7 @@ inherit setuptools3 pypi
 
 # WARNING: the following rdepends are from setuptools install_requires. These
 # upstream names may not correspond exactly to bitbake package names.
-RDEPENDS_${PN} += "python3-typing"
+# RDEPENDS_${PN} += "python3-typing"
 
 # WARNING: the following rdepends are determined through basic analysis of the
 # python sources, and might not be 100% accurate.
