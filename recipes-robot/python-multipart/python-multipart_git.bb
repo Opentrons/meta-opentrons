@@ -24,6 +24,8 @@ S = "${WORKDIR}/git"
 
 inherit setuptools3 pypi
 
+PYPI_PACKAGE = python-multipart
+
 # WARNING: the following rdepends are from setuptools install_requires. These
 # upstream names may not correspond exactly to bitbake package names.
 RDEPENDS_${PN} += "python3-six"
