@@ -22,7 +22,7 @@ SRC_URI[sha512sum] = "4b120ee45602ce703ee360fb5af07a8854bcb1ecd9084057e00324b152
 
 inherit setuptools3 pypi
 
-PYPI_PACKAGE = python-dotenv
+PYPI_PACKAGE = "python-dotenv"
 
 # The following configs & dependencies are from setuptools extras_require.
 # These dependencies are optional, hence can be controlled via PACKAGECONFIG.
