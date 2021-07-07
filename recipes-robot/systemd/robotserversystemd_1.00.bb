@@ -8,7 +8,7 @@ FILES_${PN} += "${systemd_system_unitdir}/opentrons-robot-server.service"
 FILES_${PN} += "${systemd_system_unitdir}/opentrons.target"
 FILES_${PN} += "${systemd_system_unitdir}/opentrons.targets.wants"
 
-RDEPENDS_${PN} = "nginx"
+RDEPENDS_${PN} = "nginx python3-uvicorn"
 do_install_append() {
   install -d ${D}${systemd_system_unitdir}
   install -m 0644 ${WORKDIR}/opentrons-robot-server.service ${D}${systemd_system_unitdir}
