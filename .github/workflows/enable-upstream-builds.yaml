@@ -54,7 +54,7 @@ jobs:
           route: POST /repos/{owner}/{repo}/git/refs
           owner: opentrons
           repo: oe-core
-          ref: ${{ steps.head-ref.output.refname }}
+          ref: ${{ steps.head-ref.outputs.refname }}
           sha: "${{ fromJSON(steps.get-oe-core-main-head.outputs.data).object.sha }}"
       - name: 'Branch oe-core/${{steps.head-ref.outputs.refname}} already exists, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
