@@ -40,7 +40,7 @@ jobs:
         id: codebuild
         uses: aws-actions/aws-codebuild-run-build@v1.0.3
         env:
-          GITHUB_SHA: ${{ fromJSON(steps.check-matching-branch.outputs.data) && fromJSON(steps.check-matching-branch.outputs.data).object && fromJSON(steps.check-matching-branch.outputs.data).sha }}
+          GITHUB_SHA: ${{ fromJSON(steps.check-matching-branch.outputs.data) && fromJSON(steps.check-matching-branch.outputs.data).object && fromJSON(steps.check-matching-branch.outputs.data).object.sha }}
         with:
           project-name: ${{ secrets.AWS_CODEBUILD_PROJECT_NAME }}
       - name: Post results

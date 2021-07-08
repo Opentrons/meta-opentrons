@@ -31,6 +31,7 @@ jobs:
           ref: ${{ steps.head-ref.outputs.refname }}
       - name: 'Branch was deleted elsewhere, nothing to do'
         if: ${{ failure() }}
+        run: echo ""
       - name: 'Getting oe-core/${{steps.head-ref.outputs.branchname}} diff from main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
