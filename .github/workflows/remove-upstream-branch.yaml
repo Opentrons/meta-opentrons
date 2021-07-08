@@ -6,8 +6,8 @@ name: 'Remove automatically created branches'
 on:
   pull_request:
     types: [closed]
-    branches-ignore:
-      - 'main'
+    branches:
+      - '*'
 
 jobs:
   remove-branch:
