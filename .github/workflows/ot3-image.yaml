@@ -36,7 +36,7 @@ jobs:
         uses: octokit/request-action@v2.x
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          route: GET /repos/{owner}/{repo}/git/ref/${ref}
+          route: GET /repos/{owner}/{repo}/git/ref/{ref}
           owner: opentrons
           repo: oe-core
           ref: heads/main
