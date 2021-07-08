@@ -19,7 +19,7 @@ jobs:
     runs-on: 'ubuntu-18.04'
     steps:
       - name: 'Format head ref properly'
-        run: echo '::set-output name=refname::${GITHUB_REF#refs/}'
+        run: echo "::set-output name=refname::${GITHUB_REF#refs/}"
         id: head-ref
       - name: 'Check if matching branch exists in oe-core'
         continue-on-error: true
@@ -35,7 +35,7 @@ jobs:
         id: get-oe-core-main-head
         uses: octokit/request-action@v2.x
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CROSSREPO_GH_TOKEN }}
           route: GET /repos/{owner}/{repo}/git/ref/{ref}
           owner: opentrons
           repo: oe-core
@@ -47,7 +47,7 @@ jobs:
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         uses: octokit/request-action@v2.x
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CROSSREPO_GH_TOKEN }}
           route: POST /repos/{owner}/{repo}/git/refs
           owner: opentrons
           repo: oe-core
