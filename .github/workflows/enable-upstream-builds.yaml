@@ -4,7 +4,7 @@
 # this will cause builds of oe-core on that branch to pull this branch of
 # this repo.
 
-name: 'Set up upstream branches'
+name: 'Build OT3 Image'
 
 on:
   pull_request:
@@ -63,12 +63,19 @@ jobs:
     name: 'Build the branch'
     runs-on: 'ubuntu-18.04'
     needs: setup-branch
+    timeout-minutes: 480
     steps:
       - name: 'Format head ref properly'
         run: |
           echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
           echo "::set-output name=branchname::${GITHUB_HEAD_REF#refs/heads/}"
         id: head-ref
+      - name: Set AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
       - name: Run CodeBuild
         id: codebuild
         uses: aws-actions/aws-codebuild-run-build@v1.0.3
