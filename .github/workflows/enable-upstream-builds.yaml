@@ -8,7 +8,7 @@ name: 'Set up upstream branches'
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronized]
     branches:
       - '*'
   workflow_dispatch:
@@ -19,7 +19,9 @@ jobs:
     runs-on: 'ubuntu-18.04'
     steps:
       - name: 'Format head ref properly'
-        run: echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
+        run: |
+          echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
+          echo "::set-output name=branchname::${GITHUB_HEAD_REF#refs/heads/}"
         id: head-ref
       - name: 'Check if matching branch oe-core/${{ steps.head-ref.outputs.refname}} exists'
         continue-on-error: true
@@ -52,8 +54,31 @@ jobs:
           route: POST /repos/{owner}/{repo}/git/refs
           owner: opentrons
           repo: oe-core
-          ref: ${{ github.ref }}
+          ref: ${{ steps.head-ref.output.refname }}
           sha: "${{ fromJSON(steps.get-oe-core-main-head.outputs.data).object.sha }}"
       - name: 'Branch oe-core/${{steps.head-ref.outputs.refname}} already exists, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
         run: echo ""
+  run-build:
+    name: 'Build the branch'
+    runs-on: 'ubuntu-18.04'
+    needs: setup-branch
+    steps:
+      - name: 'Format head ref properly'
+        run: |
+          echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
+          echo "::set-output name=branchname::${GITHUB_HEAD_REF#refs/heads/}"
+        id: head-ref
+      - name: Run CodeBuild
+        id: codebuild
+        uses: aws-actions/aws-codebuild-run-build@v1.0.3
+        env:
+          GITHUB_SHA: ${{ steps.head-ref.outputs.branchname }}
+        with:
+          project-name: ${{ secrets.AWS_CODEBUILD_PROJECT_NAME }}
+      - name: Post results
+        uses: slackapi/slack-github-action@v1.14.0
+        with:
+          payload: "{\"s3-url\":\"https://s3.console.aws.amazon.com/s3/buckets/ot3-builds?prefix=${{ steps.codebuild.outputs.aws-build-id }}/\",\"type\":\"branch in meta-opentrons\", \"reflike\":\"${{ steps.head-ref.outputs.branchname }}\", \"image\":\"https://d2irdh6zupqygx.cloudfront.net/${{steps.codebuild.outputs.aws-build-id}}/ot3-oe/opentrons/toradex-minimal.tar\"}"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
