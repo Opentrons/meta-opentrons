@@ -23,6 +23,8 @@ jobs:
         id: head-ref
       - name: 'Check if matching branch exists in oe-core'
         continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: octokit/request-action@v2.x
         id: check-matching-branch
         with:
@@ -33,9 +35,10 @@ jobs:
       - name: 'Creating matching branch: Finding head of oe-core/main'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         id: get-oe-core-main-head
+        env:
+          GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
         uses: octokit/request-action@v2.x
         with:
-          token: ${{ secrets.CROSSREPO_GH_TOKEN }}
           route: GET /repos/{owner}/{repo}/git/ref/{ref}
           owner: opentrons
           repo: oe-core
@@ -45,9 +48,10 @@ jobs:
             summary: The object sha for the object
       - name: 'Creating matching branch oe-core/${{steps.head-ref.outputs.refname}}'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
         uses: octokit/request-action@v2.x
         with:
-          token: ${{ secrets.CROSSREPO_GH_TOKEN }}
           route: POST /repos/{owner}/{repo}/git/refs
           owner: opentrons
           repo: oe-core
