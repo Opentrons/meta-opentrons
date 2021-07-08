@@ -8,7 +8,7 @@ name: 'Set up upstream branches'
 
 on:
   pull_request:
-    types: [opened, reopened, synchronized]
+    types: [opened, reopened, synchronize]
     branches:
       - '*'
   workflow_dispatch:
@@ -54,7 +54,7 @@ jobs:
           route: POST /repos/{owner}/{repo}/git/refs
           owner: opentrons
           repo: oe-core
-          ref: heads/${{ github.head_ref }}
+          ref: refs/heads/${{ github.head_ref }}
           sha: "${{ fromJSON(steps.get-oe-core-main-head.outputs.data).object.sha }}"
       - name: 'Branch oe-core/${{github.head_ref}} already exists, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
