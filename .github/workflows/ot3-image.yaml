@@ -1,0 +1,61 @@
+# Kick off a build of the ot3 system on pushes to branches with matching names
+# in oe-core
+
+name: 'Build OT-3 Image'
+
+on:
+  push:
+    branches:
+      - '*'
+    # Make sure that if you remove this you alter the branch creation logic,
+    # which will otherwise be able to create tags
+    tags-ignore:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  invoke-builds:
+    name: 'Start build if possible'
+    runs-on: 'ubuntu-18.04'
+    steps:
+      - name: 'Format head ref properly'
+        run: echo '::set-output name=refname::${GITHUB_REF#refs/}'
+        id: head-ref
+      - name: 'Check if matching branch exists in oe-core'
+        continue-on-error: true
+        uses: octokit/request-action@v2.x
+        id: check-matching-branch
+        with:
+          route: GET /repos/{owner}/{repo}/git/ref/{ref}
+          owner: opentrons
+          repo: oe-core
+          ref: ${{ steps.head-ref.outputs.refname }}
+      - name: 'Creating matching branch: Finding head of oe-core/main'
+        if: ${{ steps.check-matching-branch.outputs.status != 200 }}
+        id: get-oe-core-main-head
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/{owner}/{repo}/git/
+          owner: opentrons
+          repo: oe-core
+          output: |
+            title: The head of oe-core/main
+            summary: The object sha for the object
+      - name: 'Creating matching branch oe-core/${{steps.head-ref.outputs.refname}}'
+        if: ${{ steps.check-matching-branch.outputs.status != 200 }}
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/{owner}/{repo}/git/refs
+          owner: opentrons
+          repo: oe-core
+          ref: ${{ github.ref }}
+          sha: ${{ fromJSON(steps.get-oe-core-main-head.outputs.data).object.sha }}
+      - name: Run CodeBuild
+        id: codebuild
+        uses: aws-actions/aws-codebuild-run-build@v1.0.3
+        with:
+          project-name: ${{ secrets.AWS_CODEBUILD_PROJECT_NAME }}
+      - name: Post results
+        uses: slackapi/slack-github-action@v1.14.0
+        with:
+          payload: "{\"s3-url\":\"https://s3.console.aws.amazon.com/s3/buckets/ot3-builds?prefix=${{ steps.codebuild.outputs.aws-build-id }}/\",\"type\":\"branch in meta-opentrons\", \"reflike\":\"${{ github.ref }}\", \"image\":\"https://d2irdh6zupqygx.cloudfront.net/${{steps.codebuild.outputs.aws-build-id}}/ot3-oe/opentron/toradex-minimal.tar\"}"
