@@ -33,7 +33,7 @@ jobs:
           route: GET /repos/{owner}/{repo}/git/ref/{ref}
           owner: opentrons
           repo: oe-core
-          ref: ${{ github.head_ref }}
+          ref: heads/${{github.head_ref}}
       - name: 'Creating matching branch: Finding head of oe-core/main'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         id: get-oe-core-main-head
