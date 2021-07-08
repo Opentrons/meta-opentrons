@@ -50,6 +50,7 @@ jobs:
         run: echo ""
       - name: 'Removing oe-core/${{steps.head-ref.outputs.refname}}'
         if: ${{ steps.check-matching-branch.outputs.status == 200 && fromJSON(steps.get-branch-details.outputs.data).status != "ahead" }}
+        uses: octokit/request-action@v2.x
         env:
           GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
         with:
