@@ -1,0 +1,55 @@
+# Since we created a branch when the pull request opened, we should close it when
+# the pull request closes - as long as nobody's made changes in the meantime.
+
+name: 'Remove automatically created branches'
+
+on:
+  pull_request:
+    types: [closed]
+    branches-ignore:
+      - 'main'
+
+jobs:
+  remove-branch:
+    name: 'Remove an automatically-created branch (as long as it has no changes)'
+    runs-on: 'ubuntu-18.04'
+    steps:
+      - name: 'Format head ref properly'
+        run: |
+          echo "::set-output name=refname::${GITHUB_REF#refs/}"
+          echo "::set-output name=branchname::${GITHUB_REF#refs/heads/}"
+        id: head-ref
+      - name: 'Check if matching branch oe-core/${{ steps.head-ref.outputs.refname}} exists'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: octokit/request-action@v2.x
+        id: check-matching-branch
+        with:
+          route: GET /repos/{owner}/{repo}/git/ref/{ref}
+          owner: opentrons
+          repo: oe-core
+          ref: ${{ steps.head-ref.outputs.refname }}
+      - name: 'Branch was deleted elsewhere, nothing to do'
+        if: ${{ failure() }}
+      - name: 'Getting oe-core/${{steps.head-ref.outputs.branchname}} diff from main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: octokit/request-action@v2.x
+        id: get-branch-details
+        with:
+          route: GET /repos/{owner}/{repo}/compare/{basebranch}...{checkbranch}
+          owner: opentrons
+          repo: oe-core
+          basebranch: main
+          checkbranch: ${{ steps.head-ref.outputs.branchname }}
+      - name: 'Branch has diverged from main, preserving'
+        if: ${{ fromJSON(steps.get-branch-details.outputs.data).status == "ahead" }}
+      - name: 'Removing oe-core/${{steps.head-ref.outputs.refname}}'
+        if: ${{ fromJSON(steps.get-branch-details.outputs.data).status != "ahead" }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
+        with:
+          route: DELETE /repos/{owner}/{repo}/git/refs/{refname}
+          owner: opentrons
+          repo: oe-core
+          branch: ${{ steps.head-ref.outputs.refname }}

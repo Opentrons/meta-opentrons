@@ -1,0 +1,58 @@
+# Ensures that when a pull request occurs, a branch matching the name of
+# the branch being pulled from is created in oe-core. Because oe-core's
+# submodule update machinery tries to check out a matching branch name,
+# this will cause builds of oe-core on that branch to pull this branch of
+# this repo.
+
+name: 'Set up upstream branches'
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  setup-branch:
+    name: 'Ensure a matching branch exists in oe-core'
+    runs-on: 'ubuntu-18.04'
+    steps:
+      - name: 'Format head ref properly'
+        run: echo "::set-output name=refname::${GITHUB_REF#refs/}"
+        id: head-ref
+      - name: 'Check if matching branch oe-core/${{ steps.head-ref.outputs.refname}} exists'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: octokit/request-action@v2.x
+        id: check-matching-branch
+        with:
+          route: GET /repos/{owner}/{repo}/git/ref/{ref}
+          owner: opentrons
+          repo: oe-core
+          ref: ${{ steps.head-ref.outputs.refname }}
+      - name: 'Creating matching branch: Finding head of oe-core/main'
+        if: ${{ steps.check-matching-branch.outputs.status != 200 }}
+        id: get-oe-core-main-head
+        env:
+          GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/{owner}/{repo}/git/ref/{ref}
+          owner: opentrons
+          repo: oe-core
+          ref: heads/main
+      - name: 'Creating matching branch oe-core/${{steps.head-ref.outputs.refname}}'
+        if: ${{ steps.check-matching-branch.outputs.status != 200 }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/{owner}/{repo}/git/refs
+          owner: opentrons
+          repo: oe-core
+          ref: ${{ github.ref }}
+          sha: "${{ fromJSON(steps.get-oe-core-main-head.outputs.data).object.sha }}"
+      - name: 'Branch oe-core/${{steps.head-ref.outputs.refname}} already exists, nothing to do'
+        if: ${{ steps.check-matching-branch.outputs.status == 200 }}
