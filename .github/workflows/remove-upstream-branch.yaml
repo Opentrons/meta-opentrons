@@ -46,10 +46,10 @@ jobs:
           basebranch: main
           checkbranch: ${{ steps.head-ref.outputs.branchname }}
       - name: 'Branch has diverged from main, preserving'
-        if: ${{ steps.check-matching-branch.outputs.status == 200 && fromJSON(steps.get-branch-details.outputs.data).status == "ahead" }}
+        if: ${{ (steps.check-matching-branch.outputs.status == 200) && (fromJSON(steps.get-branch-details.outputs.data).status == "ahead") }}
         run: echo ""
       - name: 'Removing oe-core/${{steps.head-ref.outputs.refname}}'
-        if: ${{ steps.check-matching-branch.outputs.status == 200 && fromJSON(steps.get-branch-details.outputs.data).status != "ahead" }}
+        if: ${{ (steps.check-matching-branch.outputs.status == 200) && (fromJSON(steps.get-branch-details.outputs.data).status != "ahead") }}
         uses: octokit/request-action@v2.x
         env:
           GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
