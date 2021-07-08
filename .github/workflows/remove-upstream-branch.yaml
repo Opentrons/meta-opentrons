@@ -16,8 +16,8 @@ jobs:
     steps:
       - name: 'Format head ref properly'
         run: |
-          echo "::set-output name=refname::${GITHUB_REF#refs/}"
-          echo "::set-output name=branchname::${GITHUB_REF#refs/heads/}"
+          echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
+          echo "::set-output name=branchname::${GITHUB_HEAD_REF#refs/heads/}"
         id: head-ref
       - name: 'Check if matching branch oe-core/${{ steps.head-ref.outputs.refname}} exists'
         env:

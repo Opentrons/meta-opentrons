@@ -19,7 +19,7 @@ jobs:
     runs-on: 'ubuntu-18.04'
     steps:
       - name: 'Format head ref properly'
-        run: echo "::set-output name=refname::${GITHUB_REF#refs/}"
+        run: echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
         id: head-ref
       - name: 'Check if matching branch oe-core/${{ steps.head-ref.outputs.refname}} exists'
         continue-on-error: true
