@@ -20,6 +20,7 @@ jobs:
           echo "::set-output name=branchname::${GITHUB_HEAD_REF#refs/heads/}"
         id: head-ref
       - name: 'Check if matching branch oe-core/${{ steps.head-ref.outputs.refname}} exists'
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: octokit/request-action@v2.x
@@ -30,9 +31,10 @@ jobs:
           repo: oe-core
           ref: ${{ steps.head-ref.outputs.refname }}
       - name: 'Branch was deleted elsewhere, nothing to do'
-        if: ${{ failure() }}
+        if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         run: echo ""
       - name: 'Getting oe-core/${{steps.head-ref.outputs.branchname}} diff from main'
+        if: ${{ steps.check-matching-branch.outputs.status == 200 }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: octokit/request-action@v2.x
@@ -44,10 +46,10 @@ jobs:
           basebranch: main
           checkbranch: ${{ steps.head-ref.outputs.branchname }}
       - name: 'Branch has diverged from main, preserving'
-        if: ${{ fromJSON(steps.get-branch-details.outputs.data).status == "ahead" }}
+        if: ${{ steps.check-matching-branch.outputs.status == 200 && fromJSON(steps.get-branch-details.outputs.data).status == "ahead" }}
         run: echo ""
       - name: 'Removing oe-core/${{steps.head-ref.outputs.refname}}'
-        if: ${{ fromJSON(steps.get-branch-details.outputs.data).status != "ahead" }}
+        if: ${{ steps.check-matching-branch.outputs.status == 200 && fromJSON(steps.get-branch-details.outputs.data).status != "ahead" }}
         env:
           GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
         with:
