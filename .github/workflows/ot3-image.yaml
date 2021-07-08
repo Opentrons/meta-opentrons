@@ -34,6 +34,7 @@ jobs:
           ref: ${{ steps.head-ref.outputs.refname }}
       - name: 'Branch not yet created; open a pull request for automated builds'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
+        run: echo ""
       - name: Run CodeBuild
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
         id: codebuild

@@ -44,6 +44,7 @@ jobs:
           checkbranch: ${{ steps.head-ref.outputs.branchname }}
       - name: 'Branch has diverged from main, preserving'
         if: ${{ fromJSON(steps.get-branch-details.outputs.data).status == "ahead" }}
+        run: echo ""
       - name: 'Removing oe-core/${{steps.head-ref.outputs.refname}}'
         if: ${{ fromJSON(steps.get-branch-details.outputs.data).status != "ahead" }}
         env:

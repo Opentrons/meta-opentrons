@@ -56,3 +56,4 @@ jobs:
           sha: "${{ fromJSON(steps.get-oe-core-main-head.outputs.data).object.sha }}"
       - name: 'Branch oe-core/${{steps.head-ref.outputs.refname}} already exists, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
+        run: echo ""
