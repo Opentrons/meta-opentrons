@@ -56,4 +56,4 @@ jobs:
           route: DELETE /repos/{owner}/{repo}/git/refs/{refname}
           owner: opentrons
           repo: oe-core
-          branch: heads/${{ steps.head-ref.outputs.refname }}
+          refname: heads/${{ steps.head-ref.outputs.refname }}
