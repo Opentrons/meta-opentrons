@@ -29,7 +29,7 @@ jobs:
           route: GET /repos/{owner}/{repo}/git/ref/{ref}
           owner: opentrons
           repo: oe-core
-          ref: ${{ steps.head-ref.outputs.refname }}
+          ref: heads/${{ steps.head-ref.outputs.refname }}
       - name: 'Branch was deleted elsewhere, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         run: echo ""
@@ -56,4 +56,4 @@ jobs:
           route: DELETE /repos/{owner}/{repo}/git/refs/{refname}
           owner: opentrons
           repo: oe-core
-          branch: ${{ steps.head-ref.outputs.refname }}
+          branch: heads/${{ steps.head-ref.outputs.refname }}
