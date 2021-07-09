@@ -48,8 +48,13 @@ jobs:
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         env:
           GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
+          GIT_USER: ${{github.actor}}:${{secrets.CROSSREPO_GH_TOKEN}}
         run: |
           cd oe-core
+          git config --global user.email 'engineering@opentrons.com'
+          git config --global user.name 'Opentrons Github Bot'
+          git config --global user.password ${{ secrets.CROSSREPO_GH_TOKEN }}
+
           git checkout -b ${{ steps.head-ref.outputs.branchname }}
           git submodule set-branch -b ${{ steps.head-ref.outputs.branchname }} layers/meta-opentrons
           git commit -F- <<EOF
