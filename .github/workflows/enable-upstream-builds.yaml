@@ -17,11 +17,17 @@ jobs:
   setup-branch:
     name: 'Ensure a matching branch exists in oe-core'
     runs-on: 'ubuntu-18.04'
+    outputs:
+      do-branch-setup: ${{ steps.check-matching-branch.outputs.status == 200 }}
+      refname: ${{ steps.head-ref.refname }}
+      branchname: ${{ steps.head-ref.branchname }}
+      pullnumber: ${{ steps.head-ref.pullnumber }}
     steps:
       - name: 'Format head ref properly'
         run: |
           echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
           echo "::set-output name=branchname::${GITHUB_HEAD_REF#refs/heads/}"
+          echo "::set-output name=pullnumber::${GITHUB_REF#refs/pulls/}"
         id: head-ref
       - name: 'Check if matching branch oe-core/${{ steps.head-ref.outputs.refname}} exists'
         continue-on-error: true
@@ -34,58 +40,43 @@ jobs:
           owner: opentrons
           repo: oe-core
           ref: heads/${{github.head_ref}}
-      - name: 'Creating matching branch: Finding head of oe-core/main'
+      - name: 'Create branch: pulling oe-core'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
-        id: get-oe-core-main-head
-        env:
-          GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
-        uses: octokit/request-action@v2.x
+        uses: actions/checkout@v2
         with:
-          route: GET /repos/{owner}/{repo}/git/ref/{ref}
-          owner: opentrons
-          repo: oe-core
-          ref: heads/main
-      - name: 'Creating matching branch oe-core/${{steps.head-ref.outputs.refname}}'
+          depth: 1
+          repo: opentrons/oe-core
+          token: ${{ secrets.CROSSREPO_GH_TOKEN }}
+          ref: main
+          path: oe-core
+      - name: 'making branch and changing submodule ref'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         env:
           GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/{owner}/{repo}/git/refs
-          owner: opentrons
-          repo: oe-core
-          ref: refs/heads/${{ github.head_ref }}
-          sha: "${{ fromJSON(steps.get-oe-core-main-head.outputs.data).object.sha }}"
-      - name: 'Branch oe-core/${{github.head_ref}} already exists, nothing to do'
+        run: |
+          cd oe-core
+          git checkout -b ${{ jobs.check-branch.outputs.branchname }}
+          git submodule set-branch -b ${{ jobs.check-branch.outputs.branchname }} layers/meta-opentrons
+          git commit -m << EOF
+          layers/meta-opentrons: ${{jobs.check-branch.outputs.branchname}}
+
+          This is an automated commit that sets the tracking-branch of the meta-opentrons
+          submodule to the branch being used in
+          https://github.com/opentrons/meta-opentrons/pulls/${{jobs.check-branch.pullnumber}}
+          EOF
+          git push --set-upstream origin ${{ jobs.check-branch.outputs.branchname }}
+
+      - name: 'Branch ${{ steps.head-ref.outputs.branchname }} exists, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
         run: echo ""
-  run-build:
-    name: 'Build the branch'
-    runs-on: 'ubuntu-18.04'
-    needs: setup-branch
-    timeout-minutes: 480
-    steps:
-      - name: 'Format head ref properly'
-        run: |
-          echo "::set-output name=refname::${GITHUB_HEAD_REF#refs/}"
-          echo "::set-output name=branchname::${GITHUB_HEAD_REF#refs/heads/}"
-        id: head-ref
-      - name: Set AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Run CodeBuild
-        id: codebuild
-        uses: aws-actions/aws-codebuild-run-build@v1.0.3
+
+      - name: 'Start build'
         env:
-          GITHUB_SHA: ${{ github.head_ref }}
+          GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
+        uses: octokit/request-action@v2.x
         with:
-          project-name: ${{ secrets.AWS_CODEBUILD_PROJECT_NAME }}
-      - name: Post results
-        uses: slackapi/slack-github-action@v1.14.0
-        with:
-          payload: "{\"s3-url\":\"https://s3.console.aws.amazon.com/s3/buckets/ot3-builds?prefix=${{ steps.codebuild.outputs.aws-build-id }}/\",\"type\":\"branch in meta-opentrons\", \"reflike\":\"${{ github.head_ref }}\", \"image\":\"https://d2irdh6zupqygx.cloudfront.net/${{steps.codebuild.outputs.aws-build-id}}/ot3-oe/opentrons/toradex-minimal.tar\"}"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          route: POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches
+          owner: opentrons
+          repo: oe-core
+          workflow_id: build-ot3.yml
+          ref: ${{ steps.head-ref.outputs.refname }}
