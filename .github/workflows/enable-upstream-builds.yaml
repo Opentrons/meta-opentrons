@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           depth: 1
-          repo: opentrons/oe-core
+          repository: opentrons/oe-core
           token: ${{ secrets.CROSSREPO_GH_TOKEN }}
           ref: main
           path: oe-core
@@ -51,7 +51,6 @@ jobs:
           GIT_USER: ${{github.actor}}:${{secrets.CROSSREPO_GH_TOKEN}}
         run: |
           cd oe-core
-          git show
           git remote show origin
           git config --global user.email 'engineering@opentrons.com'
           git config --global user.name 'Opentrons Github Bot'
