@@ -57,7 +57,7 @@ jobs:
 
           git checkout -b ${{ steps.head-ref.outputs.branchname }}
           git submodule set-branch -b ${{ steps.head-ref.outputs.branchname }} layers/meta-opentrons
-          git add -a
+          git add --all
           git commit -F- <<EOF
           layers/meta-opentrons: ${{steps.head-ref.outputs.branchname}}
 
