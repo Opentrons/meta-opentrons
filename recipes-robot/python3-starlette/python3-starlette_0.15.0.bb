@@ -30,7 +30,7 @@ inherit setuptools3
 #
 # Uncomment this line to enable all the optional features.
 #PACKAGECONFIG ?= "full full:python_version < "3.10""
-PACKAGECONFIG[full] = ",,,python3-itsdangerous python3-jinja2 python3-python-multipart python3-pyyaml python3-requests"
+PACKAGECONFIG[full] = ",,,python3-itsdangerous python3-jinja2 python3-multipart python3-pyyaml python3-requests"
 #PACKAGECONFIG[full:python_version < "3.10"] = ",,,python3-graphene"
 
 # WARNING: the following rdepends are from setuptools install_requires. These
