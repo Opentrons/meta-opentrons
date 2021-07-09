@@ -52,7 +52,7 @@ jobs:
           cd oe-core
           git checkout -b ${{ steps.head-ref.outputs.branchname }}
           git submodule set-branch -b ${{ steps.head-ref.outputs.branchname }} layers/meta-opentrons
-          git commit -m << EOF
+          git commit -F- <<EOF
           layers/meta-opentrons: ${{steps.head-ref.outputs.branchname}}
 
           This is an automated commit that sets the tracking-branch of the meta-opentrons
