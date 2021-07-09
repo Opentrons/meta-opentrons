@@ -14,14 +14,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup-branch:
-    name: 'Ensure a matching branch exists in oe-core'
+  branch-and-build:
+    name: 'Ensure a matching branch exists in oe-core then build'
     runs-on: 'ubuntu-18.04'
-    outputs:
-      do-branch-setup: ${{ steps.check-matching-branch.outputs.status == 200 }}
-      refname: ${{ steps.head-ref.refname }}
-      branchname: ${{ steps.head-ref.branchname }}
-      pullnumber: ${{ steps.head-ref.pullnumber }}
     steps:
       - name: 'Format head ref properly'
         run: |
@@ -55,16 +50,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
         run: |
           cd oe-core
-          git checkout -b ${{ jobs.check-branch.outputs.branchname }}
-          git submodule set-branch -b ${{ jobs.check-branch.outputs.branchname }} layers/meta-opentrons
+          git checkout -b ${{ steps.head-ref.outputs.branchname }}
+          git submodule set-branch -b ${{ steps.head-ref.outputs.branchname }} layers/meta-opentrons
           git commit -m << EOF
-          layers/meta-opentrons: ${{jobs.check-branch.outputs.branchname}}
+          layers/meta-opentrons: ${{steps.head-ref.outputs.branchname}}
 
           This is an automated commit that sets the tracking-branch of the meta-opentrons
           submodule to the branch being used in
-          https://github.com/opentrons/meta-opentrons/pulls/${{jobs.check-branch.pullnumber}}
+          https://github.com/opentrons/meta-opentrons/pulls/${{steps.head-ref.pullnumber}}
           EOF
-          git push --set-upstream origin ${{ jobs.check-branch.outputs.branchname }}
+          git push --set-upstream origin ${{ steps.head-ref.outputs.branchname }}
 
       - name: 'Branch ${{ steps.head-ref.outputs.branchname }} exists, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
