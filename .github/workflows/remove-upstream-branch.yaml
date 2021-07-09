@@ -33,23 +33,22 @@ jobs:
       - name: 'Branch was deleted elsewhere, nothing to do'
         if: ${{ steps.check-matching-branch.outputs.status != 200 }}
         run: echo ""
-      - name: 'Getting oe-core/${{steps.head-ref.outputs.branchname}} diff from main'
+      - name: 'Getting oe-core/${{steps.head-ref.outputs.branchname}} HEAD'
         if: ${{ steps.check-matching-branch.outputs.status == 200 }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: octokit/request-action@v2.x
-        id: get-branch-details
+        id: get-head-details
         with:
-          route: GET /repos/{owner}/{repo}/compare/{basebranch}...{checkbranch}
+          route: GET /repos/{owner}/{repo}/git/commits/{commit_sha}
           owner: opentrons
           repo: oe-core
-          basebranch: main
-          checkbranch: ${{ steps.head-ref.outputs.branchname }}
-      - name: 'Branch has diverged from main, preserving'
-        if: ${{ (steps.check-matching-branch.outputs.status == 200) && endsWith(fromJSON(steps.get-branch-details.outputs.data).status, "ahead") }}
+          commit_sha: ${{ fromJSON(steps.check-matching-branch.outputs.data).object.sha }}
+      - name: 'Author was not us, preserving'
+        if: ${{ (steps.check-matching-branch.outputs.status == 200) && (fromJSON(steps.get-head-details.outputs.data).author.email != 'engineering@opentrons.com')}}
         run: echo ""
       - name: 'Removing oe-core/${{steps.head-ref.outputs.refname}}'
-        if: ${{ (steps.check-matching-branch.outputs.status == 200) && endsWith(fromJSON(steps.get-branch-details.outputs.data).status != "ahead") }}
+        if: ${{ (steps.check-matching-branch.outputs.status == 200) && (fromJSON(steps.get-head-details.outputs.data).author.email ==  "engineering@opentrons.com") }}
         uses: octokit/request-action@v2.x
         env:
           GITHUB_TOKEN: ${{ secrets.CROSSREPO_GH_TOKEN }}
