@@ -12,7 +12,7 @@ PV = "1.0+git${SRCPV}"
 SRCREV = "fe4d6db248b2444506e839005e54bf4475d1bdc8"
 inherit setuptools3 insane
 INSANE_SKIP = "arch"
-RDEPENDS_${PN} += "python3-numpy python3-typing-extensions python3-jsonschema python3-aionotify python3-pyserial python3-fcntl"
+RDEPENDS_${PN} += " python3-systemd python3-uvicorn python3-numpy python3-typing-extensions python3-jsonschema python3-aionotify python3-pyserial python3-fcntl"
 S = "${WORKDIR}/git"
 DISTUTILS_SETUP_PATH = "${S}/api/"
 #do_install(){
