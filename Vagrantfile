@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "debian/ot3"
-  config.vm.hostname = "buster64.box"
+  config.vm.hostname = "ot3.box"
   config.vm.network "private_network", type: "dhcp"
 
   config.vm.provider "virtualbox" do |vb|
