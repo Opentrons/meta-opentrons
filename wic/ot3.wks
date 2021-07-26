@@ -5,18 +5,18 @@
 # It uses u-boot + other binaries gathered together on imx-boot file
 #
 # The disk layout used is:
-#  - ---------- -------------- ------------- -------------- 
-# | | imx-boot |     boot     |    rootfs   |    rootfs2    | 
-#  - ---------- -------------- ------------- -------------- 
+#  - ---------- -------------- ------------- -------------- --------------   
+# | | imx-boot |     boot     |    rootfs   |    rootfs2   |    var       |  
+#  - ---------- -------------- ------------- -------------- --------------   
 # ^ ^          ^              ^              ^              ^
 # | |          |              |              |              |
-# 0 |        8MiB          72MiB          72MiB + rootfs    72MIB + rootfs + freespace
+# 0 |        8MiB          72MiB          72MiB + rootfs    72MIB + rootfs
 #   ${IMX_BOOT_SEEK} 32 or 33kiB, see reference manual
 #
 #
 part u-boot --source rawcopy --sourceparams="file=imx-boot" --ondisk mmcblk --no-table --align 33 
 part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 8192 --size 64
-part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root --align 8192
-part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root2 --align 8192
-
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root --align 8192 --size 128 
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label root2 --align 8192 --size 128 
+part /var --source rootfs --ondisk mmcblk --fstype=ext4 --label data --align 8129 --size 32
 bootloader --ptable msdos
