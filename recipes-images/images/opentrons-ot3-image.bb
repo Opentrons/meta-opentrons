@@ -38,7 +38,10 @@ IMAGE_INSTALL += " \
     packagegroup-machine-tdx-cli \
     packagegroup-wifi-tdx-cli \
     packagegroup-wifi-fw-tdx-cli \
+    packagegroup-opentrons-graphical \
+    packagegroup-opentrons-qt5 \
     udev-extraconf \
+    v4l-utils \
     ${CONMANPKGS} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
     python3-robot-server python3-robot-shared-data \
