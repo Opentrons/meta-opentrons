@@ -39,7 +39,6 @@ IMAGE_INSTALL += " \
     packagegroup-wifi-tdx-cli \
     packagegroup-wifi-fw-tdx-cli \
     packagegroup-opentrons-graphical \
-    packagegroup-opentrons-qt5 \
     udev-extraconf \
     v4l-utils \
     ${CONMANPKGS} \
