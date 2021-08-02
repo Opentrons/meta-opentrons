@@ -40,7 +40,7 @@ do_install[depends] += "virtual/fakeroot-native:do_populate_sysroot"
 INSANE_SKIP_${PN} = " already-stripped"
 FILES_${PN} = "/opt/opentrons-app/* /opt/opentrons-app/**/*"
 # todo figure out how to not need cups
-RDEPENDS_${PN} = "nodejs udev \
+RDEPENDS_${PN} = "udev \
                   nss \
                   dbus \
                   nspr libasound \
@@ -48,4 +48,4 @@ RDEPENDS_${PN} = "nodejs udev \
                   libxcomposite libx11 libxrender libxext \
                   atk \
                   cups"
-DEPENDS = " nodejs-native nodejs udev"
+DEPENDS = " nodejs-native udev"
