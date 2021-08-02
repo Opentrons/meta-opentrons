@@ -46,5 +46,5 @@ IMAGE_INSTALL += " \
     python3-robot-server python3-robot-shared-data \
     python3-update-server python3-notify-server \
     python3-robot-api robotserversystemd python3-uvicorn \
-    robot-app
+    robot-app \
  "
