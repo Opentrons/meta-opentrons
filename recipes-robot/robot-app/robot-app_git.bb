@@ -37,7 +37,7 @@ fakeroot do_install(){
 REQUIRED_DISTRO_FEATURES = "x11"
 
 do_install[depends] += "virtual/fakeroot-native:do_populate_sysroot"
-INSANE_SKIP_${PN} = " already-stripped"
+INSANE_SKIP_${PN} = " already-stripped file-rdeps"
 FILES_${PN} = "/opt/opentrons-app/* /opt/opentrons-app/**/*"
 # todo figure out how to not need cups
 RDEPENDS_${PN} = "udev \
