@@ -35,10 +35,12 @@ IMAGE_INSTALL += " \
     packagegroup-boot \
     packagegroup-basic \
     packagegroup-base-tdx-cli \
+    packagegroup-tdx-cli \
     packagegroup-machine-tdx-cli \
     packagegroup-wifi-tdx-cli \
     packagegroup-wifi-fw-tdx-cli \
-    packagegroup-opentrons-graphical \
+    packagegroup-tdx-graphical \
+    packagegroup-fsl-isp \
     udev-extraconf \
     v4l-utils \
     ${CONMANPKGS} \
@@ -46,5 +48,5 @@ IMAGE_INSTALL += " \
     python3-robot-server python3-robot-shared-data \
     python3-update-server python3-notify-server \
     python3-robot-api robotserversystemd python3-uvicorn \
-    robot-app \
+    x-window-robot-app weston-xwayland weston weston-init imx-gpu-viv \
  "

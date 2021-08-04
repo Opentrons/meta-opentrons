@@ -1,6 +1,7 @@
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
+
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
 
@@ -10,6 +11,7 @@ SRCREV = "fe4d6db248b2444506e839005e54bf4475d1bdc8"
 S = "${WORKDIR}/git"
 
 inherit insane
+
 
 do_configure(){
     npm install -g yarn
@@ -44,8 +46,9 @@ RDEPENDS_${PN} = "udev \
                   nss \
                   dbus \
                   nspr libasound \
-                  gtk+ cairo \
-                  libxcomposite libx11 libxrender libxext \
-                  atk \
+                  gtk+3 cairo \
+                  libxcomposite libx11 libxrender libxext libx11-xcb libxi \
+                  libxtst libxcursor libxrandr libxscrnsaver \
+                  atk at-spi2-atk\
                   cups"
 DEPENDS = " nodejs-native udev"

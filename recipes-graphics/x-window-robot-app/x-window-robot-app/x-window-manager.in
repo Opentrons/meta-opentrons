@@ -1,0 +1,6 @@
+RET=1
+while [ $RET -ne 0 ]; do
+	cd @PATH@
+	@APP@
+	RET=$?
+done
