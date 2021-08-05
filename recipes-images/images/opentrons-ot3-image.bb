@@ -1,9 +1,9 @@
-inherit core-image
-
 SUMMARY = "Opentrons OT3 Image"
 DESCRIPTION = "Opentrons OT3 Robot Image"
 
 LICENSE = "apache-2"
+
+inherit core-image
 
 #Prefix to the resulting deployable tarball name
 export IMAGE_BASENAME = "opentrons-ot3-image"
@@ -13,6 +13,8 @@ IMAGE_NAME = "${MACHINE_NAME}_${IMAGE_BASENAME}"
 # Copy Licenses to image /usr/share/common-license
 COPY_LIC_MANIFEST ?= "1"
 COPY_LIC_DIRS ?= "1"
+
+SYSTEMD_DEFAULT_TARGET = "graphical.target"
 
 # Show Tezi EULA license
 TEZI_SHOW_EULA_LICENSE ?= "1"
@@ -43,10 +45,12 @@ IMAGE_INSTALL += " \
     packagegroup-fsl-isp \
     udev-extraconf \
     v4l-utils \
+    bash coreutils makedevs mime-support util-linux \
+    timestamp-service \
     ${CONMANPKGS} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
     python3-robot-server python3-robot-shared-data \
     python3-update-server python3-notify-server \
     python3-robot-api robotserversystemd python3-uvicorn \
-    x-window-robot-app weston-xwayland weston weston-init imx-gpu-viv \
+    x-window-robot-app weston-xwayland weston weston-init imx-gpu-viv wayland-terminal-launch\
  "
