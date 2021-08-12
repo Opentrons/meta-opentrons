@@ -16,7 +16,11 @@ inherit insane
 do_configure(){
     npm install -g yarn
     cd ${S}
-    make setup-js
+    yarn
+    cd ${S}/app-shell
+    yarn electron-rebuild --arch=arm64
+    cd ${S}
+    make -C shared-data setup-js
 }
 
 do_compile(){
