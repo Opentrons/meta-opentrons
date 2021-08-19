@@ -25,18 +25,20 @@ DEPENDS += " \
   libxtst \
   libxi \
   libcap \
+  gclient-native \
 "
 
 PV = "13.1.8"
 
-S = "${WORKDIR}/gclient"
-SRC_URI = "git://chromium.googlesource.com/chromium/tools/depot_tools.git;protocol=https;"
-ELECTRON_URI = "https://github.com/electron/electron"
-E_S = "${WORKDIR}/electron"
+S = "${WORKDIR}/electron"
+SRC_URI = "git://{ELECTRON_URI};protocol=https;branch=main "
+ELECTRON_URI = "github.com/electron/electron"
 
 do_fetch () {
-   mkdir -p ${E_S}/src/electron
-   cd ${E_S}
-   PATH=${S}:${PATH} gclient config --name="src/electron" --unmanaged ${ELECTRON_URI}
-   PATH=${S}:${PATH} gclient sync --with_branch_heads --with_tags
+   mkdir -p ${S}/src/electron
+   cd ${S}
+   PATH=${STAGING_BINDIR_NATIVE}/gclient:${PATH} gclient config --name="src/electron" --unmanaged https://${ELECTRON_URI}
+   PATH=${STAGING_BINDIR_NATIVE}/gclient:${PATH} gclient sync --with_branch_heads --with_tags
 }
+
+do_fetch[deptask] = "do_populate_sysroot"
