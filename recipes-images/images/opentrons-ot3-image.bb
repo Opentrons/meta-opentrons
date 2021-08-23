@@ -32,6 +32,7 @@ IMAGE_LINGUAS = "en-us"
 CONMANPKGS ?= "connman connman-plugin-loopback connman-plugin-ethernet connman-plugin-wifi connman-client"
 
 IMAGE_INSTALL += " \
+    libubootenv \
     packagegroup-boot \
     packagegroup-basic \
     packagegroup-base-tdx-cli \
