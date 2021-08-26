@@ -49,10 +49,5 @@ FILES_${PN} = "/opt/opentrons-app/* /opt/opentrons-app/**/*"
 RDEPENDS_${PN} = "udev \
                   nss \
                   dbus \
-                  nspr libasound \
-                  gtk+3 cairo \
-                  libxcomposite libx11 libxrender libxext libx11-xcb libxi \
-                  libxtst libxcursor libxrandr libxscrnsaver \
-                  atk at-spi2-atk\
-                  cups"
-DEPENDS = " nodejs-native udev"
+                  electron"
+DEPENDS = " nodejs-native udev electron"

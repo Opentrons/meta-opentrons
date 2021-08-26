@@ -1,3 +1,5 @@
+require chromium-gn.inc
+
 SUMMARY = "Build cross platform desktop apps with web technologies"
 DESCRIPTION = "The Electron framework lets you write cross-platform \
 desktop applications using JavaScript, HTML and CSS. It is based on \
@@ -25,20 +27,4 @@ DEPENDS += " \
   libxtst \
   libxi \
   libcap \
-  gclient-native \
 "
-
-PV = "13.1.8"
-
-S = "${WORKDIR}/electron"
-SRC_URI = "git://{ELECTRON_URI};protocol=https;branch=main "
-ELECTRON_URI = "github.com/electron/electron"
-
-do_fetch () {
-   mkdir -p ${S}/src/electron
-   cd ${S}
-   PATH=${STAGING_BINDIR_NATIVE}/gclient:${PATH} gclient config --name="src/electron" --unmanaged https://${ELECTRON_URI}
-   PATH=${STAGING_BINDIR_NATIVE}/gclient:${PATH} gclient sync --with_branch_heads --with_tags
-}
-
-do_fetch[deptask] = "do_populate_sysroot"
