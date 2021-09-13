@@ -13,9 +13,9 @@ inherit native
 # evils.
 B = "${S}/out_bootstrap"
 
-SRC_URI += " \
-        file://0001-Pass-no-static-libstdc-to-gen.py.patch \
-"
+# SRC_URI += " \
+#         file://0001-Pass-no-static-libstdc-to-gen.py.patch \
+# "
 
 # The build system expects the linker to be invoked via the compiler. If we use
 # the default value for BUILD_LD, it will fail because it does not recognize
@@ -36,7 +36,7 @@ DEPENDS = "clang-native ninja-native"
 do_configure[noexec] = "1"
 
 do_compile() {
-	python ${S}/tools/gn/bootstrap/bootstrap.py --skip-generate-buildfiles
+	python ${S}/src/tools/gn/bootstrap/bootstrap.py --skip-generate-buildfiles
 }
 
 do_install() {

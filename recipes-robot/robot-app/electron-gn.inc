@@ -12,8 +12,9 @@ inherit features_check gtk-icon-cache qemu
 OUTPUT_DIR = "out/Release"
 B = "${S}/${OUTPUT_DIR}"
 
+#     file://0001-DCScan-Fix-builds-with-system-sysroots.patch file://chromium-freetype-2.11.patch
+
 SRC_URI += " \
-    file://limit-number-of-LTO-jobs.patch \
     file://0001-Remove-the-GN-settings-done-for-clang-that-conflict-.patch \
     file://0002-v8-qemu-wrapper.patch \
     file://0003-wrapper-extra-flags.patch \
@@ -23,13 +24,13 @@ SRC_URI += " \
     file://0010-avoid-link-latomic-failure-on-CentOS-8-host.patch \
     file://0012-Fix-font-rendering-with-glibc-2.33.patch \
     file://0001-nomerge-attribute-on-declaration-is-only-available-s.patch \
-    file://0001-DCScan-Fix-builds-with-system-sysroots.patch \
     file://0001-ARM64-VRegister-from_code-expected-to-be-constexpr.patch \
     file://fix-harfbuzz-supp-size-error.patch \
     file://fix-ruy-numeric-limits-error.patch \
     file://0001-exception_handler.cc-Match-the-types-for-SIGSTKSZ.patch \
-    file://chromium-freetype-2.11.patch \
+    file://limit-number-of-LTO-jobs.patch \
 "
+
 
 SRC_URI_append_libc-musl = "\
     file://musl/0001-mallinfo-implementation-is-glibc-specific.patch \
@@ -59,7 +60,7 @@ SRC_URI_append_libc-musl = "\
 ANY_OF_DISTRO_FEATURES = "opengl vulkan"
 
 # Append instead of assigning; the gtk-icon-cache class inherited above also
-# adds packages to DEPENDS.
+# adds packages to DEPENDS. REMOVED GN NATIVE
 DEPENDS += " \
     alsa-lib \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'at-spi2-core', '', d)} \
@@ -71,7 +72,6 @@ DEPENDS += " \
     flac \
     freetype \
     glib-2.0 \
-    gn-native \
     gperf-native \
     gtk+3 \
     jpeg \
@@ -267,14 +267,14 @@ BUILD_LDFLAGS_append_runtime-llvm = " -rtlib=libgcc -unwindlib=libgcc -stdlib=li
 # we've created, set the right target architecture and make sure we are not
 # using Chromium's toolchain (bundled clang, bundled binutils etc).
 GN_ARGS += ' \
-        custom_toolchain="//build/toolchain/yocto_yocto_target" \
+        custom_toolchain="//build/toolchain/yocto:yocto_target" \
         gold_path="" \
-        host_toolchain="//build/toolchain/yocto_yocto_native" \
+        host_toolchain="//build/toolchain/yocto:yocto_native" \
         is_clang=true \
         clang_base_path="${@clang_install_path(d)}" \
         clang_use_chrome_plugins=false \
         target_cpu="${@gn_target_arch_name(d)}" \
-        v8_snapshot_toolchain="//build/toolchain/yocto_yocto_target" \
+        v8_snapshot_toolchain="//build/toolchain/yocto:yocto_target" \
 '
 
 # ARM builds need special additional flags (see ${S}/build/config/arm.gni).
@@ -379,9 +379,9 @@ do_add_nodejs_symlink () {
 addtask add_nodejs_symlink after do_configure before do_compile
 
 do_configure() {
-	cd ${S}/src
+	cd ${S}
 	./build/linux/unbundle/replace_gn_files.py --system-libraries ${GN_UNBUNDLE_LIBS}
-	gn gen --args='${GN_ARGS}' "${OUTPUT_DIR}"
+	./buildtools/linux64/gn gen --args='${GN_ARGS}' "${OUTPUT_DIR}"
 }
 
 do_compile() {

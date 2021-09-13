@@ -7,10 +7,6 @@ io.js and Chromium and is used in the Atom editor."
 HOMEPAGE = "http://electron.atom.io/"
 LICENSE = "MIT"
 
-LIC_FILES_CHKSUM = " \
-  file://LICENSE;md5=dd413c962a5a67c951cc5dd842060ace \
-"
-
 PV = "13.1.8"
 
 GN_ARGS += "use_lld=true use_gold=false"
@@ -25,9 +21,15 @@ BUILD_LDFLAGS_remove = "-rtlib=libgcc -unwindlib=libgcc -stdlib=libc++ -lc++abi 
 REQUIRED_DISTRO_FEATURES = "wayland"
 
 DEPENDS += "\
+        virtual/egl \
+        libxkbcommon \
+        at-spi2-atk \
+		libnotify \
         wayland \
         wayland-native \
 "
+
+#         ozone_platform_drm=true
 
 GN_ARGS += "\
         ${PACKAGECONFIG_CONFARGS} \
@@ -35,21 +37,20 @@ GN_ARGS += "\
         ozone_auto_platforms=false \
         ozone_platform_headless=false \
         ozone_platform_wayland=true \
-        ozone_platform_drm=true \
-        ozone_platform_x11=false \
+        ozone_platform_x11=true \
         system_wayland_scanner_path="${STAGING_BINDIR_NATIVE}/wayland-scanner" \
         use_system_wayland_scanner=true \
         use_xkbcommon=true \
         use_system_libwayland=true \
-        use_system_minigbm=true \
         use_system_libdrm=true \
         use_gtk=false \
         use_x11=false \
+        use_system_minigbm=true \
         enable_basic_printing=false \
 "
 
-GN_ARGS_prepend = "import(\"//electron/build/args/release.gn\") \
-"
+GN_ARGS_prepend = 'import("//electron/build/args/release.gn") \
+'
 
 do_install() {
     oewarn "INSTALLING"
@@ -140,13 +141,13 @@ do_walsjbad() {
 	install -m 0755 chromedriver.unstripped ${D}${bindir}/chromedriver
 }
 
-PACKAGES =+ "${PN}-chromedriver"
+#PACKAGES =+ "${PN}-chromedriver"
 
-FILES_${PN}-chromedriver = "${bindir}/chromedriver"
+#FILES_${PN}-chromedriver = "${bindir}/chromedriver"
 
-FILES_${PN} = " \
-        ${bindir}/chromium \
-        ${datadir}/applications/chromium.desktop \
-        ${datadir}/icons/hicolor/*x*/apps/chromium.png \
-        ${libdir}/chromium/* \
-"
+#FILES_${PN} = " \
+#        ${bindir}/chromium \
+#        ${datadir}/applications/chromium.desktop \
+#        ${datadir}/icons/hicolor/*x*/apps/chromium.png \
+#        ${libdir}/chromium/* \
+#"
