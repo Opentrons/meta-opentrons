@@ -54,4 +54,5 @@ IMAGE_INSTALL += " \
     python3-robot-api robotserversystemd python3-uvicorn \
     weston-xwayland weston weston-init imx-gpu-viv \
     robot-app-wayland-launch robot-app \
+    psplash \
  "
