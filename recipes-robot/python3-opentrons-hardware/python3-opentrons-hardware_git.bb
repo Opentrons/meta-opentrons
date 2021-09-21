@@ -8,6 +8,12 @@ SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 PV = "1.0+git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
-inherit setuptools3
+inherit insane
+
 S = "${WORKDIR}/git"
-DISTUTILS_SETUP_PATH = "${S}/hardware/"
+B = "${WORKDIR}/build"
+PIPENV_APP_BUNDLE_PROJECT_ROOT = "${S}/hardware"
+PIPENV_APP_BUNDLE_DIR = "/opt/opentrons-hardware"
+PIPENV_APP_BUNDLE_EXTRAS = ""
+
+inherit pipenv_app_bundle
