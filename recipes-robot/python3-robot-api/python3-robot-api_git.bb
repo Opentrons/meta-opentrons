@@ -8,8 +8,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-#SRCREV = "bf8fbe8a98c14061af8d5bbb22d7a6b95a25eaab"
-SRCREV = "fe4d6db248b2444506e839005e54bf4475d1bdc8"
+SRCREV = "${AUTOREV}"
 inherit setuptools3 insane
 INSANE_SKIP = "arch"
 RDEPENDS_${PN} += " python3-systemd python3-uvicorn python3-numpy python3-typing-extensions python3-jsonschema python3-aionotify python3-pyserial python3-fcntl"

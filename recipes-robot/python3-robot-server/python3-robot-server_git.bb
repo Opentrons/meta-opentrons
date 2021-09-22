@@ -11,7 +11,7 @@ SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-SRCREV = "30902cc8b2c664aa894f91ab7bb2eaafdefc705a"
+SRCREV = "${AUTOREV}"
 
 inherit setuptools3
 RDEPENDS_${PN} += "python3-fastapi python3-multipart python3-dotenv python3-wsproto python3-typing-extensions python3-starlette python3-pydantic python3-sniffio"

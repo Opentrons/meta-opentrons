@@ -11,7 +11,7 @@ SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-SRCREV = "fe4d6db248b2444506e839005e54bf4475d1bdc8"
+SRCREV = "${AUTOREV}"
 RDEPENDS_${PN} += "python3-jsonschema"
 S = "${WORKDIR}/git"
 
