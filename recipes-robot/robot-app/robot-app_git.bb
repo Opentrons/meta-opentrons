@@ -7,7 +7,7 @@ PV = "1.0+git${SRCPV}"
 
 inherit features_check
 
-SRCREV = "fe4d6db248b2444506e839005e54bf4475d1bdc8"
+SRCREV = "${AUTOREV}"
 S = "${WORKDIR}/git"
 
 inherit insane
@@ -28,7 +28,7 @@ do_compile(){
     make -C app dist
     make -C app-shell lib
     cd ${S}/app-shell
-    yarn run electron-builder --config electron-builder.config.js --linux --arm64 dir
+    yarn run electron-builder --config electron-builder.config.js --linux --arm64 --dir --publish never
 }
 
 fakeroot do_install(){
