@@ -5,13 +5,15 @@
 
 // Verdin SPI CAN controller mcp2517fd.
 
-/SPI-CAN-controller/;
-/mcp2517fd/;
+/dts-v1/;
+/plugin/;
 
 / {
 	compatible = "toradex,verdin-imx8mm";
 };
 // You can use ecspi2 or ecspi3 in the SKUs without CAN Controller on CoM
+
+
 &ecspi3 {
 	#address-cells = <1>;
 	#size-cells = <0>;
@@ -29,7 +31,7 @@
 		gpio-controller;
 		interrupt-parent = <&gpio1>;
 		interrupts = <6 IRQ_TYPE_EDGE_FALLING>;
-		microchip,clock-allways-on;
+		microchip,clock-always-on;
 		microchip,clock-out-div = <1>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_can1_int>;
