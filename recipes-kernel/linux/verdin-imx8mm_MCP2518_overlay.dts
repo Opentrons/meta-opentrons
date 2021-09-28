@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: Apache-2
+/*
+ * Copyright 2020-2021 Opentrons
+ */
+
+// Verdin SPI CAN controller mcp2517fd.
+
+/SPI-CAN-controller/;
+/mcp2517fd/;
+
+/ {
+	compatible = "toradex,verdin-imx8mm";
+};
+// You can use ecspi2 or ecspi3 in the SKUs without CAN Controller on CoM
+&ecspi3 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>,
+		   <&gpio1 5 GPIO_ACTIVE_LOW>;
+	/* This property is required, even if marked as obsolete in the doku */
+	fsl,spi-num-chipselects = <2>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi3>;
+	status = "okay";
+ 
+	can1: can@0 {
+		compatible = "microchip,mcp2517fd";
+		clocks = <&clk20m>;
+		gpio-controller;
+		interrupt-parent = <&gpio1>;
+		interrupts = <6 IRQ_TYPE_EDGE_FALLING>;
+		microchip,clock-allways-on;
+		microchip,clock-out-div = <1>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_can1_int>;
+		reg = <0>;
+		spi-max-frequency = <2000000>;
+	};
+};
