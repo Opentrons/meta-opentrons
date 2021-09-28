@@ -11,31 +11,44 @@
 / {
 	compatible = "toradex,verdin-imx8mm";
 };
-// You can use ecspi2 or ecspi3 in the SKUs without CAN Controller on CoM
 
-
+/* Verdin CAN_1 and CAN_2 (on-module) */
 &ecspi3 {
 	#address-cells = <1>;
 	#size-cells = <0>;
-	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>,
-		   <&gpio1 5 GPIO_ACTIVE_LOW>;
+	cs-gpios = <&gpio5 25 1>,
+		   <&gpio1 5 1>;
 	/* This property is required, even if marked as obsolete in the doku */
 	fsl,spi-num-chipselects = <2>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_ecspi3>;
 	status = "okay";
- 
+
 	can1: can@0 {
 		compatible = "microchip,mcp2517fd";
 		clocks = <&clk20m>;
 		gpio-controller;
 		interrupt-parent = <&gpio1>;
-		interrupts = <6 IRQ_TYPE_EDGE_FALLING>;
-		microchip,clock-always-on;
+		interrupts = <6 2>;
+		microchip,clock-allways-on;
 		microchip,clock-out-div = <1>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_can1_int>;
 		reg = <0>;
 		spi-max-frequency = <2000000>;
+	};
+
+	can2: can@1 {
+		compatible = "microchip,mcp2517fd";
+		clocks = <&clk20m>;
+		gpio-controller;
+		interrupt-parent = <&gpio1>;
+		interrupts = <7 2>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_can2_int>;
+		reg = <1>;
+		spi-max-frequency = <2000000>;
+		/* not assembled */
+		status = "disabled";
 	};
 };
