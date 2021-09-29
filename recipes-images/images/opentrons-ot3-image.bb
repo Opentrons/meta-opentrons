@@ -28,7 +28,6 @@ ROOTFS_POSTPROCESS_COMMAND += " add_rootfs_version;"
 IMAGE_LINGUAS = "en-us"
 #IMAGE_LINGUAS = "de-de fr-fr en-gb en-us pt-br es-es kn-in ml-in ta-in"
 
-CONMANPKGS ?= "connman connman-plugin-loopback connman-plugin-ethernet connman-plugin-wifi connman-client"
 
 IMAGE_INSTALL += " \
     bmap-tools \
@@ -46,7 +45,7 @@ IMAGE_INSTALL += " \
     v4l-utils \
     bash coreutils makedevs mime-support util-linux \
     timestamp-service \
-    ${CONMANPKGS} \
+    networkmanager crda \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
     python3-robot-server python3-robot-shared-data \
     python3-update-server python3-notify-server \
