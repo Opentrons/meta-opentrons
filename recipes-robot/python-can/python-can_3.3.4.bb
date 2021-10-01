@@ -1,19 +1,6 @@
-# Recipe created by recipetool
-# This is the basis of a recipe and may need further editing in order to be fully functional.
-# (Feel free to remove these comments when editing.)
 
 SUMMARY = "Controller Area Network interface module for Python"
 HOMEPAGE = "https://github.com/hardbyte/python-can"
-# WARNING: the following LICENSE and LIC_FILES_CHKSUM values are best guesses - it is
-# your responsibility to verify that the values are complete and correct.
-# NOTE: Original package / source metadata indicates license is: LGPL-3.0
-#
-# NOTE: multiple licenses have been detected; they have been separated with &
-# in the LICENSE value for now since it is a reasonable assumption that all
-# of the licenses apply. If instead there is a choice between the multiple
-# licenses then you should change the value to separate the licenses with |
-# instead of &. If there is any doubt, check the accompanying documentation
-# to determine which situation is applicable.
 LICENSE = "LGPLv3 & LGPL-3.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=e6a600fd5e1d9cbde2d983680233ad02"
 
@@ -26,34 +13,7 @@ SRC_URI[sha512sum] = "cc4084c0348e1e0ef2372ebd863f2dfc85cae7315beb15d68f6e7d9531
 
 inherit setuptools3
 
-# The following configs & dependencies are from setuptools extras_require.
-# These dependencies are optional, hence can be controlled via PACKAGECONFIG.
-# The upstream names may not correspond exactly to bitbake package names.
-#
-# Uncomment this line to enable all the optional features.
-#PACKAGECONFIG ?= ":platform_system == "windows" :python_version < "3.5" neovi serial test"
-
-# WARNING: the following rdepends are from setuptools install_requires. These
-# upstream names may not correspond exactly to bitbake package names.
 RDEPENDS_${PN} += "python3-aenum python3-wrapt"
 
-# WARNING: the following rdepends are determined through basic analysis of the
-# python sources, and might not be 100% accurate.
 RDEPENDS_${PN} += "python3-asyncio python3-core python3-ctypes python3-curses python3-datetime python3-io python3-logging python3-math python3-multiprocessing python3-netclient python3-pickle python3-pkg-resources python3-pyserial python3-six python3-sqlite3 python3-stringold python3-threading python3-typing python3-unittest"
 
-# WARNING: We were unable to map the following python package/module
-# dependencies to the bitbake packages which include them:
-#    ConfigParser
-#    Queue
-#    _overlapped
-#    _winapi
-#    hypothesis
-#    hypothesis.strategies
-#    ics
-#    mock
-#    past.builtins
-#    pytest
-#    uptime
-#    win32com.client
-#    win32event
-#    wrapt
