@@ -1,4 +1,3 @@
-
 SUMMARY = "Controller Area Network interface module for Python"
 HOMEPAGE = "https://github.com/hardbyte/python-can"
 LICENSE = "LGPLv3 & LGPL-3.0"
