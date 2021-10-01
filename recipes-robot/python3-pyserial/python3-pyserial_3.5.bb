@@ -13,15 +13,12 @@ HOMEPAGE = "https://github.com/pyserial/pyserial"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=520e45e59fc2cf94aa53850f46b86436"
 
+SRC_URI = "https://files.pythonhosted.org/packages/1e/7d/ae3f0a63f41e4d2f6cb66a5b57197850f919f59e558159a4dd3a818f5082/pyserial-${PV}.tar.gz"
 SRC_URI[md5sum] = "1cf25a76da59b530dbfc2cf99392dc83"
-SRC_URI[sha1sum] = "8709dd72730f6d097fc2e039bc0e264dc1c9341a"
 SRC_URI[sha256sum] = "3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb"
-SRC_URI[sha384sum] = "63429431af8b978ee62965422b56ac0268076cb0e43732476c9be62c0a9d18a9718e1698ce6156a157997f23ef09fecf"
-SRC_URI[sha512sum] = "c8df5e50d952d5a6dcf1d9253a6ba953e9763c545a867da66c22c90dfa015aba0194f2a8f29a229d0a5f4dc8bfeeaaab8bcfda4066ed78a18b151bc05e6ae327"
 
 S = "${WORKDIR}/pyserial-${PV}"
-
-inherit setuptools3 pypi
+inherit setuptools3
 
 # The following configs & dependencies are from setuptools extras_require.
 # These dependencies are optional, hence can be controlled via PACKAGECONFIG.
