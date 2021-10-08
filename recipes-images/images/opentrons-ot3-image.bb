@@ -30,8 +30,6 @@ IMAGE_LINGUAS = "en-us"
 
 
 IMAGE_INSTALL += " \
-    bmap-tools \
-    libubootenv \
     packagegroup-boot \
     packagegroup-basic \
     packagegroup-base-tdx-cli \
@@ -47,10 +45,9 @@ IMAGE_INSTALL += " \
     timestamp-service \
     networkmanager crda \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
-    python3-robot-server python3-robot-shared-data \
-    python3-update-server python3-notify-server \
-    python3-robot-api robotserversystemd python3-uvicorn \
     weston-xwayland weston weston-init imx-gpu-viv \
     robot-app-wayland-launch robot-app \
+    python3-robot-server python3-update-server \
+    python3 python3-misc python3-modules \
     python3-opentrons-hardware \
  "
