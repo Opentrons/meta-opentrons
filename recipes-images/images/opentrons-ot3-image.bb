@@ -47,7 +47,7 @@ IMAGE_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
     weston-xwayland weston weston-init imx-gpu-viv \
     robot-app-wayland-launch robot-app \
-    python3-robot-server python3-update-server \
+    opentrons-robot-server opentrons-update-server \
     python3 python3-misc python3-modules \
-    python3-opentrons-hardware \
+    opentrons-hardware \
  "
