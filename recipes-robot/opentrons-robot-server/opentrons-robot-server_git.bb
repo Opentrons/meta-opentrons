@@ -13,7 +13,12 @@ SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 PV = "1.0+git${SRCPV}"
 SRCREV = "${AUTOREV}"
 
-inherit insane
+inherit insane systemd
+
+SYSTEMD_AUTO_ENABLE = "enable"
+SYSTEMD_SERVICE_${PN} = "opentrons-robot-server.service"
+FILESEXTRAPATHS_prepend = "${THISDIR}/files:"
+SRC_URI_append = " file://opentrons-robot-server.service"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
@@ -27,6 +32,11 @@ do_compile_append () {
     rm -rf ${PIPENV_APP_BUNDLE_SOURCE_VENV}/opentrons/resources/scripts
 }
 
-RDEPENDS_${PN} += " python3-numpy python3-systemd"
+do_install_append () {
+    install -d ${D}${systemd_system_unitdir}
+    install -m 0644 ${WORKDIR}/opentrons-robot-server.service ${D}${systemd_system_unitdir}/opentrons-robot-server.service
+}
+
+RDEPENDS_${PN} += " python3-numpy python3-systemd nginx"
 
 inherit pipenv_app_bundle
