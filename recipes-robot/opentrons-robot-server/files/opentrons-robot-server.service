@@ -5,8 +5,10 @@ After=nginx.service
 
 [Service]
 Type=notify
-ExecStart=uvicorn robot_server:app --uds /run/aiohttp.sock --ws wsproto
-Environment=OT_SMOOTHIE_ID=AMA RUNNING_ON_PI=true PYTHONPATH=/opt/opentrons-robot-server:/usr/lib/python3.8/site-packages
+ExecStart=python3 -m uvicorn robot_server:app --uds /run/aiohttp.sock --ws wsproto
+Environment=OT_SMOOTHIE_ID=AMA
+Environment=RUNNING_ON_PI=true
+Environment=PYTHONPATH=/opt/opentrons-robot-server:/usr/lib/python3.8/site-packages
 Restart=on-failure
 TimeoutStartSec=3min
 

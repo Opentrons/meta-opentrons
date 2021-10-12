@@ -12,16 +12,17 @@ SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
 SRCREV = "${AUTOREV}"
-
-inherit insane systemd
+S = "${WORKDIR}/git"
+B = "${WORKDIR}/build"
+PACKAGEJSON_FILE = "${S}/robot-server/robot_server/package.json"
+DEST_SYSTEMD_DROPFILE ?= "${B}/robot-server-version.conf"
+inherit insane systemd get_ot_package_version
 
 SYSTEMD_AUTO_ENABLE = "enable"
 SYSTEMD_SERVICE_${PN} = "opentrons-robot-server.service"
 FILESEXTRAPATHS_prepend = "${THISDIR}/files:"
 SRC_URI_append = " file://opentrons-robot-server.service"
 
-S = "${WORKDIR}/git"
-B = "${WORKDIR}/build"
 PIPENV_APP_BUNDLE_PROJECT_ROOT = "${S}/robot-server"
 PIPENV_APP_BUNDLE_DIR = "/opt/opentrons-robot-server"
 PIPENV_APP_BUNDLE_USE_GLOBAL = "numpy systemd-python"
@@ -32,10 +33,16 @@ do_compile_append () {
     rm -rf ${PIPENV_APP_BUNDLE_SOURCE_VENV}/opentrons/resources/scripts
 }
 
+addtask do_write_systemd_dropfile after do_compile before do_install
+
 do_install_append () {
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${WORKDIR}/opentrons-robot-server.service ${D}${systemd_system_unitdir}/opentrons-robot-server.service
+    install -d ${D}${systemd_system_unitdir}/opentrons-robot-server.service.d
+    install -m 0644 ${B}/robot-server-version.conf ${D}${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf
 }
+
+FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d ${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf"
 
 RDEPENDS_${PN} += " python3-numpy python3-systemd nginx"
 
