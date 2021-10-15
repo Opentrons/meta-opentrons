@@ -27,7 +27,7 @@ PIPENV_APP_BUNDLE_PROJECT_ROOT = "${S}/robot-server"
 PIPENV_APP_BUNDLE_DIR = "/opt/opentrons-robot-server"
 PIPENV_APP_BUNDLE_USE_GLOBAL = "numpy systemd-python"
 PIPENV_APP_BUNDLE_STRIP_HASHES = "yes"
-PIPENV_APP_BUNDLE_EXTRAS = ""
+PIPENV_APP_BUNDLE_EXTRAS = "./../hardware"
 
 do_compile_append () {
     rm -rf ${PIPENV_APP_BUNDLE_SOURCE_VENV}/opentrons/resources/scripts

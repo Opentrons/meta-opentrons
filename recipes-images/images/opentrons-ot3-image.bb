@@ -49,5 +49,4 @@ IMAGE_INSTALL += " \
     robot-app-wayland-launch robot-app \
     opentrons-robot-server opentrons-update-server \
     python3 python3-misc python3-modules \
-    opentrons-hardware \
  "
