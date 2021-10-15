@@ -68,6 +68,12 @@ python do_rewrite_requirements() {
         else:
             working += line.strip()[:-1] + ' '
     if working: condensed.append(working)
+    extras = d.getVar("PIPENV_APP_BUNDLE_EXTRAS")
+    if extras:
+        if ' ' in extras:
+            condensed.extend(extras.split(' '))
+        else:
+            condensed.append(extras)
     internal = d.getVar("B") + '/requirements-condensed.txt'
     open(internal, 'w').write('\n'.join(condensed))
     stripped = [l for l in condensed if not l.strip().startswith('#')]
@@ -84,18 +90,22 @@ python do_rewrite_requirements() {
         bb.debug(1, 'Checking ' + plainname)
 
         if line.startswith('--index-url'): pypi.append(line)
-        elif line.startswith('--editable'):
-            working = line.split('--editable')[-1].strip()
+        elif line.startswith('--editable') or line.startswith('./'):
+            # an editable probably-local package
+            if line.startswith('--editable'):
+                working = line.split('--editable')[-1].strip()
+            else:
+                working = line.strip()
             if not working.startswith('./'):
                 raise Exception("Not gonna handle VCS links")
             working = d.getVar('PIPENV_APP_BUNDLE_PROJECT_ROOT') + '/' + working
             local.append(working)
-            bb.debug(1, 'Rewrote editable path to ' + working)
+            bb.debug(1, 'Rewrote local path to ' + working)
         elif not line.startswith('.') and not '://' in line:
             # This is a package from pypi; check if it's global
             first_nonalpha = [c for c in line if c in '=~^<>']
-            pkgname = line.split(first_nonalpha[0])[0]
-            if pkgname in d.get('PIPENV_APP_BUNDLE_USE_GLOBAL'):
+            pkgname = line.split(first_nonalpha[0])[0] if first_nonalpha else line
+            if pkgname in d.getVar('PIPENV_APP_BUNDLE_USE_GLOBAL'):
                 bb.debug(1, 'Using global version of {}'.format(pkgname))
                 continue
             else:
@@ -104,14 +114,6 @@ python do_rewrite_requirements() {
         else:
             bb.debug(1, 'Keeping ' + line)
             pypi.append(line)
-    extras = d.get("PIPENV_APP_BUNDLE_EXTRAS")
-    if extras:
-        if ' ' in extras:
-            extra_packages = [ex.strip() for ex in extras.split(' ') if ex]
-        else:
-            extra_packages = [extras]
-        bb.debug(1, 'Adding extra packages {}'.format(', '.join(extra_packages)))
-        pypi.extend(extra_packages)
     open(pypi_outfile, 'w').write('\n'.join(pypi) + '\n')
     open(local_outfile, 'w').write('\n'.join(local) + '\n')
 }
