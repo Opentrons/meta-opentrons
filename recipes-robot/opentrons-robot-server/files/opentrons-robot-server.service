@@ -11,6 +11,8 @@ Environment=RUNNING_ON_PI=true
 Environment=PYTHONPATH=/opt/opentrons-robot-server:/usr/lib/python3.8/site-packages
 Restart=on-failure
 TimeoutStartSec=3min
+After=opentrons-ot3-canbus
+Wants=opentrons-ot3-canbus
 
 [Install]
 WantedBy=multi-user.target

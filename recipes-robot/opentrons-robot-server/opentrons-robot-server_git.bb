@@ -19,9 +19,9 @@ DEST_SYSTEMD_DROPFILE ?= "${B}/robot-server-version.conf"
 inherit insane systemd get_ot_package_version
 
 SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_SERVICE_${PN} = "opentrons-robot-server.service"
+SYSTEMD_SERVICE_${PN} = "opentrons-robot-server.service opentrons-ot3-canbus.service"
 FILESEXTRAPATHS_prepend = "${THISDIR}/files:"
-SRC_URI_append = " file://opentrons-robot-server.service"
+SRC_URI_append = " file://opentrons-robot-server.service file://opentrons-ot3-canbus.service"
 
 PIPENV_APP_BUNDLE_PROJECT_ROOT = "${S}/robot-server"
 PIPENV_APP_BUNDLE_DIR = "/opt/opentrons-robot-server"
@@ -40,6 +40,7 @@ do_install_append () {
     install -m 0644 ${WORKDIR}/opentrons-robot-server.service ${D}${systemd_system_unitdir}/opentrons-robot-server.service
     install -d ${D}${systemd_system_unitdir}/opentrons-robot-server.service.d
     install -m 0644 ${B}/robot-server-version.conf ${D}${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf
+    install -m 0644 ${WORKDIR}/opentrons-ot3-canbus.service ${D}${systemd_system_unitdir}/opentrons-ot3-canbus.service
 }
 
 FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d ${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf"
