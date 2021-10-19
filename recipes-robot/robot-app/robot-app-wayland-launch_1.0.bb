@@ -18,7 +18,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 APPLICATION_ENVIRONMENT := '\"DISPLAY=\:0\:0\" \"XDG_SESSION_TYPE=wayland\" \"XDG_SESSION_DESKTOP=kiosk\"'
 
-WAYLAND_APPLICATION := "/opt/opentrons-app/opentrons --no-sandbox --enable-features=UseOzonePlatform --ozone-platform=wayland --in-process-gpu"
+WAYLAND_APPLICATION := "/opt/opentrons-app/opentrons --discovery.candidates=localhost --discovery.ipFilter=\"127.0.0.1\" --no-sandbox --enable-features=UseOzonePlatform --ozone-platform=wayland --in-process-gpu"
 
 do_compile () {
     sed -e "s:@@wayland-application@@:${WAYLAND_APPLICATION}:" -e "s:@@initial-path@@:${INITIAL_PATH}:" opentrons-robot-app.sh.in > opentrons-robot-app.sh
