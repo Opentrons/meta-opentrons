@@ -30,7 +30,7 @@
 		gpio-controller;
 		interrupt-parent = <&gpio1>;
 		interrupts = <6 2>;
-		microchip,clock-allways-on;
+		microchip,clock-always-on;
 		microchip,clock-out-div = <1>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_can1_int>;
