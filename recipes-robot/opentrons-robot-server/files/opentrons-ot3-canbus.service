@@ -1,0 +1,16 @@
+[Unit]
+Description=OT3 canbus configuration
+After=sys-subsystem-net-devices-can0.device
+
+[Service]
+Type=oneshot
+ExecStartPre=modprobe can
+ExecStartPre=modprobe can-raw
+ExecStart=ip link set can0 up type can bitrate 250000 dbitrate 250000 fd on
+ExecStop=ip link set can0 down
+RemainAfterExit=true
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=opentrons-robot-server.service
