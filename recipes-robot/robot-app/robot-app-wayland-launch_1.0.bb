@@ -12,6 +12,8 @@ S = "${WORKDIR}"
 SRC_URI = " \
     file://opentrons-robot-app.service.in \
     file://opentrons-robot-app.sh.in \
+    file://setup-tps65154.sh \
+    file://configure-screen-power.service \
 "
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
@@ -29,7 +31,10 @@ do_install () {
     install -d ${D}/${bindir} ${D}${systemd_unitdir}/system/
     install -m 0644 ${WORKDIR}/opentrons-robot-app.service ${D}${systemd_unitdir}/system
     install -m 0755 ${S}/opentrons-robot-app.sh ${D}/${bindir}
+
+    install -m 0644 ${WORKDIR}/configure-screen-power.service ${D}${systemd_unitdir}/system
+    install -m 0755 ${WORKDIR}/setup-tps65154.sh ${D}/${bindir}
 }
 
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "opentrons-robot-app.service"
+SYSTEMD_SERVICE_${PN} = "opentrons-robot-app.service configure-screen-power.service"
