@@ -6,7 +6,7 @@ After=nginx.service
 [Service]
 Type=notify
 ExecStart=python3 -m uvicorn robot_server:app --uds /run/aiohttp.sock --ws wsproto
-Environment=enableOT3HardwareController=true
+Environment=OT_API_FF_enableOT3HardwareController=true
 Environment=RUNNING_ON_PI=true
 Environment=PYTHONPATH=/opt/opentrons-robot-server:/usr/lib/python3.8/site-packages
 Restart=on-failure
