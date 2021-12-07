@@ -3,14 +3,12 @@
 
 inherit distutils3-base
 
-DEPENDS += "python3 python3-native python3-pip-native "
+DEPENDS += "python3 python3-native python3-pip-native python3-micropipenv-native "
 RDEPENDS_${PN} += " python3 python3-modules"
 
-# Not the coolest thing to do but this is a prepackaged single python file
-# so let's just download it and use it direct
-SRC_URI_append = "\
-  https://raw.githubusercontent.com/thoth-station/micropipenv/v1.1.2/micropipenv.py;md5sum=5627c85023544bae92e620f12a7c5e51"
-
+# Whether pipenv or poetry is the appropriate underlying dependency manager
+# parse
+PIPENV_APP_BUNDLE_PACKAGE_SOURCE ??= "pipenv"
 
 # This should contain a list of python dependencies that should not be
 # installed in the separate directory.  This should be done for packages
@@ -130,7 +128,7 @@ do_configure_prepend () {
    else
        HASHES="--no-hashes"
    fi
-   ${PYTHON} ${WORKDIR}/micropipenv.py requirements --no-dev ${HASHES} > ${B}/requirements-unfiltered.txt
+   ${PYTHON} -m micropipenv requirements --method ${PIPENV_APP_BUNDLE_PACKAGE_SOURCE} --no-dev ${HASHES} > ${B}/requirements-unfiltered.txt
 }
 
 do_configure[vardeps] += "PIPENV_APP_BUNDLE_STRIP_HASHES PIPENV_APP_BUNDLE_PROJECT_ROOT"
