@@ -45,6 +45,6 @@ do_install_append () {
 
 FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d ${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf"
 
-RDEPENDS_${PN} += " python3-numpy python3-systemd nginx python-can opentrons-ot3-hardware "
+RDEPENDS_${PN} += " python3-numpy python3-systemd nginx python-can "
 
 inherit pipenv_app_bundle
