@@ -44,6 +44,7 @@ PIPENV_APP_BUNDLE_SOURCE_VENV := "${B}/build-venv"
 PIP_ENVARGS := " \
    STAGING_INCDIR=${STAGING_INCDIR} \
    STAGING_LIBDIR=${STAGING_LIBDIR} \
+   _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__linux_x86_64-linux-gnu \
 "
 
 python do_rewrite_requirements() {
