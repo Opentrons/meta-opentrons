@@ -134,33 +134,27 @@ do_configure_prepend () {
 
 do_configure[vardeps] += "PIPENV_APP_BUNDLE_STRIP_HASHES PIPENV_APP_BUNDLE_PROJECT_ROOT"
 
+PIP_ARGS := "--no-compile \
+             --no-binary :all: \
+             --progress-bar off \
+             --no-deps \
+             -t ${PIPENV_APP_BUNDLE_SOURCE_VENV}"
 
 do_compile () {
    ${PIP_ENVARGS} ${PYTHON} -m pip install \
       -r ${B}/pypi.txt \
-      -t ${PIPENV_APP_BUNDLE_SOURCE_VENV} \
-      --no-compile \
-      --force-reinstall \
-      --no-binary :all: \
-      --progress-bar off
+      ${PIP_ARGS}
+
    ${PIP_ENVARGS} ${PYTHON} -m pip install \
       -r ${B}/local.txt \
-      -t ${PIPENV_APP_BUNDLE_SOURCE_VENV} \
-      --no-compile \
-      --use-feature=in-tree-build \
+      ${PIP_ARGS} \
       --force-reinstall \
-      --no-binary :all: \
-      --no-deps \
-      --progress-bar off
+      --use-feature=in-tree-build
+
    ${PIP_ENVARGS} ${PYTHON} -m pip install \
       ${PIPENV_APP_BUNDLE_PROJECT_ROOT} \
-      -t ${PIPENV_APP_BUNDLE_SOURCE_VENV} \
-      --no-compile \
       --use-feature=in-tree-build \
-      --force-reinstall \
-      --no-binary :all: \
-      --no-deps \
-      --progress-bar off
+      ${PIP_ARGS}
 }
 
 do_compile[dirs] += " ${PIPENV_APP_BUNDLE_SOURCE_VENV}"
