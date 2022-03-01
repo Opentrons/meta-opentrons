@@ -25,7 +25,7 @@ SRC_URI_append = " file://opentrons-robot-server.service file://opentrons-ot3-ca
 
 PIPENV_APP_BUNDLE_PROJECT_ROOT = "${S}/robot-server"
 PIPENV_APP_BUNDLE_DIR = "/opt/opentrons-robot-server"
-PIPENV_APP_BUNDLE_USE_GLOBAL = "numpy systemd-python python-can wrapt"
+PIPENV_APP_BUNDLE_USE_GLOBAL = "numpy systemd-python python-can wrapt pyzmq "
 PIPENV_APP_BUNDLE_STRIP_HASHES = "yes"
 PIPENV_APP_BUNDLE_EXTRAS = "./../hardware"
 
@@ -45,6 +45,6 @@ do_install_append () {
 
 FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d ${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf"
 
-RDEPENDS_${PN} += " python3-numpy python3-systemd nginx python-can "
+RDEPENDS_${PN} += " python3-numpy python3-systemd nginx python-can python3-pyzmq "
 
 inherit pipenv_app_bundle
