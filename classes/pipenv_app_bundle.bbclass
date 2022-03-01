@@ -137,7 +137,7 @@ do_configure[vardeps] += "PIPENV_APP_BUNDLE_STRIP_HASHES PIPENV_APP_BUNDLE_PROJE
 PIP_ARGS := "--no-compile \
              --no-binary :all: \
              --progress-bar off \
-             --no-deps \
+             --force-reinstall \
              -t ${PIPENV_APP_BUNDLE_SOURCE_VENV}"
 
 do_compile () {
@@ -148,12 +148,13 @@ do_compile () {
    ${PIP_ENVARGS} ${PYTHON} -m pip install \
       -r ${B}/local.txt \
       ${PIP_ARGS} \
-      --force-reinstall \
+      --no-deps \
       --use-feature=in-tree-build
 
    ${PIP_ENVARGS} ${PYTHON} -m pip install \
       ${PIPENV_APP_BUNDLE_PROJECT_ROOT} \
       --use-feature=in-tree-build \
+      --no-deps \
       ${PIP_ARGS}
 }
 
