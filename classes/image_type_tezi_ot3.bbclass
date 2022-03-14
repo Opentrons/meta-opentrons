@@ -30,6 +30,8 @@ TEZI_ROOT_FSTYPE ??= "ext4"
 TEZI_ROOT_LABEL ??= "RFS"
 TEZI_ROOT_NAME ??= "rootfs"
 TEZI_ROOT_LABEL2 ??= "RFS2"
+TEZI_ROOT_NAME3 ??= "rootfs3"
+TEZI_ROOT_LABEL3 ??= "RFS3"
 TEZI_ROOT_NAME2 ??= "rootfs2"
 TEZI_ROOT_SUFFIX ??= "tar.xz"
 TEZI_USE_BOOTFILES ??= "true"
@@ -172,8 +174,8 @@ def rootfs_tezi_emmc(d, use_bootfiles):
 
     filesystem_partitions.append(
           {
-            "partition_size_nominal": 512,
-            "want_maximised": True,
+            "partition_size_nominal": 3000,
+            "want_maximised": False,
             "content": {
               "label": d.getVar('TEZI_ROOT_LABEL'),
               "filesystem_type": d.getVar('TEZI_ROOT_FSTYPE'),
@@ -185,8 +187,8 @@ def rootfs_tezi_emmc(d, use_bootfiles):
     
     filesystem_partitions.append(
           {
-            "partition_size_nominal": 512,
-            "want_maximised": True,
+            "partition_size_nominal": 3000,
+            "want_maximised": False,
             "content": {
               "label": d.getVar('TEZI_ROOT_LABEL2'),
               "filesystem_type": d.getVar('TEZI_ROOT_FSTYPE'),
