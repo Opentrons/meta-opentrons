@@ -172,7 +172,7 @@ def rootfs_tezi_emmc(d, use_bootfiles):
 
     filesystem_partitions.append(
           {
-            "partition_size_nominal": 2048,
+            "partition_size_nominal": 3072,
             "want_maximised": False,
             "content": {
               "label": d.getVar('TEZI_ROOT_LABEL'),
@@ -185,7 +185,7 @@ def rootfs_tezi_emmc(d, use_bootfiles):
     
     filesystem_partitions.append(
           {
-            "partition_size_nominal": 2048,
+            "partition_size_nominal": 3072,
             "want_maximised": False,
             "content": {
               "label": d.getVar('TEZI_ROOT_LABEL2'),
