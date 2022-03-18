@@ -11,6 +11,6 @@ SRC_URI[sha256sum] = "51afec6ffa50a9da4cdef188971a802beb1ca8e8edb40fa429e5e529db
 
 S = "${WORKDIR}/aiohttp-3.4.4"
 
-RDEPENDS_${PN} = "python-attrs python-chardet python-multidict python-async-timeout python-yarl"
+RDEPENDS_${PN} = "python3-attrs python3-chardet python3-multidict python3-async-timeout python3-yarl"
 
-inherit setuptools
+inherit setuptools3
