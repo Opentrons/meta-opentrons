@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
 SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 
-RDEPENDS_${PN} += " bmap-tools libubootenv nginx python3-dbus"
+RDEPENDS_${PN} += " bmap-tools libubootenv nginx python3-dbus python3-aiohttp"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
@@ -23,5 +23,6 @@ PIPENV_APP_BUNDLE_PROJECT_ROOT = "${S}/update-server"
 PIPENV_APP_BUNDLE_DIR = "/opt/opentrons-update-server"
 PIPENV_APP_BUNDLE_STRIP_HASHES = "yes"
 PIPENV_APP_BUNDLE_EXTRAS = ""
+PIPENV_APP_BUNDLE_USE_GLOBAL = "python3-aiohttp"
 
 inherit pipenv_app_bundle
