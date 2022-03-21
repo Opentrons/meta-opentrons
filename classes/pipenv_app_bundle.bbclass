@@ -96,7 +96,8 @@ python do_rewrite_requirements() {
             else:
                 working = line.strip()
             if not working.startswith('./'):
-                raise Exception("Not gonna handle VCS links")
+                bb.debug(1, 'Skipping {}'.format(line))
+                continue
             working = d.getVar('PIPENV_APP_BUNDLE_PROJECT_ROOT') + '/' + working
             local.append(working)
             bb.debug(1, 'Rewrote local path to ' + working)
