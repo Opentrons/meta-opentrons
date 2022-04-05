@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# https://github.com/vincent-olivert-riera/wifi-connect/blob/master/wifi-connect
 set -euo pipefail
 
 # Read SSID
