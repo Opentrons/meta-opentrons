@@ -4,9 +4,29 @@ After=sys-subsystem-net-devices-can0.device
 
 [Service]
 Type=oneshot
+Environment=TIME_QUANTUM_NS=100\
+    PROP_PHASE_TQ=8\
+    PHASE_SEG1_TQ=7\
+    PHASE_SEG2_TQ=4\
+    SJW_TQ=1\
+
 ExecStartPre=modprobe can
 ExecStartPre=modprobe can-raw
-ExecStart=ip link set can0 up type can restart-ms 100 bitrate 250000 dbitrate 250000 fd on
+ExecStart=ip link set can0 up\
+    type can\
+    restart-ms 100\
+    fd on\
+    tq $TIME_QUANTUM_NS\
+    prop-seg $PROP_PHASE_TQ\
+    phase-seg1 $PHASE_SEG1_TQ\
+    phase-seg2 $PHASE_SEG2_TQ\
+    sjw $SJW_TQ\
+    dtq $TIME_QUANTUM_NS \
+    dprop-seg $PROP_PHASE_TQ\
+    dphase-seg1 $PHASE_SEG1_TQ\
+    dphase-seg2 $PHASE_SEG2_TQ\
+    dsjw $SJW_TQ\
+
 ExecStop=ip link set can0 down
 RemainAfterExit=true
 Restart=on-failure
