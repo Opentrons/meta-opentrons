@@ -10,6 +10,9 @@ export IMAGE_BASENAME = "opentrons-ot3-image"
 MACHINE_NAME ?= "${MACHINE}"
 IMAGE_NAME = "${MACHINE_NAME}_${IMAGE_BASENAME}"
 
+python __anonymous () {
+    bb.build.addtask('do_image_zip', 'do_image_complete', 'do_image_ext4', d)
+}
 # Copy Licenses to image /usr/share/common-license
 COPY_LIC_MANIFEST ?= "1"
 COPY_LIC_DIRS ?= "1"
@@ -50,3 +53,9 @@ IMAGE_INSTALL += " \
     opentrons-robot-server opentrons-update-server \
     python3 python3-misc python3-modules \
  "
+
+do_image_zip() {
+    cd ${DEPLOY_DIR_IMAGE}/
+    sha256sum opentrons-ot3-image-verdin-imx8mm.ext4.xz > rootfs.xz.256
+    zip ot3-system.zip opentrons-ot3-image-verdin-imx8mm.ext4.xz rootfs.xz.256
+}
