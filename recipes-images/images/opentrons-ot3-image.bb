@@ -56,6 +56,6 @@ IMAGE_INSTALL += " \
 
 do_image_zip() {
     cd ${DEPLOY_DIR_IMAGE}/
-    sha256sum opentrons-ot3-image-verdin-imx8mm.ext4.xz > rootfs.xz.256
-    zip ot3-system.zip opentrons-ot3-image-verdin-imx8mm.ext4.xz rootfs.xz.256
+    sha256sum Verdin-iMX8MM_opentrons-ot3-image.rootfs.ext4.xz > rootfs.xz.256
+    zip ot3-system.zip Verdin-iMX8MM_opentrons-ot3-image.rootfs.ext4.xz rootfs.xz.256
 }
