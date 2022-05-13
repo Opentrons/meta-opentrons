@@ -10,9 +10,8 @@ export IMAGE_BASENAME = "opentrons-ot3-image"
 MACHINE_NAME ?= "${MACHINE}"
 IMAGE_NAME = "${MACHINE_NAME}_${IMAGE_BASENAME}"
 
-python __anonymous () {
-    bb.build.addtask('do_image_zip', 'do_image_complete', 'do_image_ext4', d)
-}
+do_image_zip[depends] = "zip-native:do_populate_sysroot"
+addtask do_image_zip after do_image_complete before do_populate_lic_deploy
 # Copy Licenses to image /usr/share/common-license
 COPY_LIC_MANIFEST ?= "1"
 COPY_LIC_DIRS ?= "1"
@@ -56,6 +55,8 @@ IMAGE_INSTALL += " \
 
 do_image_zip() {
     cd ${DEPLOY_DIR_IMAGE}/
-    sha256sum opentrons-ot3-image-verdin-imx8mm.ext4.xz > rootfs.xz.256
-    zip ot3-system.zip opentrons-ot3-image-verdin-imx8mm.ext4.xz rootfs.xz.256
+    /bin/pwd
+    ls -l
+    sha256sum ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext4.xz > rootfs.xz.256
+    zip ot3-system.zip ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext4.xz rootfs.xz.256
 }

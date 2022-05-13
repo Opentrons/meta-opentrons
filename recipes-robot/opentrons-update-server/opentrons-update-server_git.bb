@@ -7,8 +7,7 @@
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
-# TODO (amitl, 2022-03-21): MOVE BACK TO EDGE!!!
-SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=RET-71-ot3-update-server;"
+SRC_URI = "git://github.com/Opentrons/opentrons.git;protocol=https;branch=edge;"
 
 RDEPENDS_${PN} += " bmap-tools libubootenv nginx python3-dbus python3-aiohttp python3-systemd"
 
