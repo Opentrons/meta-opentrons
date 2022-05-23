@@ -21,7 +21,7 @@ ExecStartPre=modprobe can-raw
 # doesn't respect that on its own (see
 # https://community.toradex.com/t/can-problem-on-verdin-i-mx8m-mini/12567/24 )
 # so force the prefetch to be 4 (8, 12, etc would also work)
-ExectStartPre=/bin/sh -c "echo 4 > /sys/module/mcp25xxfd/parameters/rx_prefetch_bytes"
+ExecStartPre=/bin/sh -c "echo 4 > /sys/module/mcp25xxfd/parameters/rx_prefetch_bytes"
 ExecStart=ip link set can0 up\
     type can\
     restart-ms 100\
