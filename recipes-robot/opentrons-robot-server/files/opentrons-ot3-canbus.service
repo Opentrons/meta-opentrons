@@ -4,6 +4,11 @@ After=sys-subsystem-net-devices-can0.device
 
 [Service]
 Type=oneshot
+# canbus timing parameters set directly to avoid the can driver calculating
+# them itself in a way that's annoying to duplicate on the microcontrollers.
+# the bitrate is
+# NS_PER_S/(TIME_QUANTUM_NS * (PROP_PHASE_TQ + PHASE_SEG1_TQ + PHASE_SEG2_TQ + 1))
+# if NS_PER_S is the number of ns in 1s, aka 1e9
 Environment=TIME_QUANTUM_NS=100\
     PROP_PHASE_TQ=8\
     PHASE_SEG1_TQ=7\
@@ -12,6 +17,10 @@ Environment=TIME_QUANTUM_NS=100\
 
 ExecStartPre=modprobe can
 ExecStartPre=modprobe can-raw
+# The MCP2518 requires prefetches be word-aligned, and the linux driver
+# doesn't respect that on its own (see
+# https://community.toradex.com/t/can-problem-on-verdin-i-mx8m-mini/12567/24 )
+# so force the prefetch to be 4 (8, 12, etc would also work)
 ExectStartPre=/bin/sh -c "echo 4 > /sys/module/mcp25xxfd/parameters/rx_prefetch_bytes"
 ExecStart=ip link set can0 up\
     type can\
