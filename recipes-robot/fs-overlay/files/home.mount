@@ -1,0 +1,13 @@
+[Unit]
+Description=Mount /home overlay 
+Requires=partition.service
+After=partition.service
+
+[Mount]
+What=overlay
+Where=/home
+Type=overlay
+Options=upperdir=/var/home,lowerdir=/home,workdir=/var/.work/home
+
+[Install]
+WantedBy=multi-user.target
