@@ -8,9 +8,11 @@ S = "${WORKDIR}"
 inherit allarch
 
 do_install () {
-        install -d ${D}/mnt/upper/
-        install -d ${D}/mnt/upper/etc/
-        install -d ${D}/mnt/upper/work/etc/
+        install -d ${D}/data/upper/
+        install -d ${D}/data/upper/etc/
+        install -d ${D}/data/upper/work/etc/
+        install -d ${D}/data/upper/var/
+        install -d ${D}/data/upper/work/var/
 }
 
-FILES_${PN} += "/mnt/upper/*"
+FILES_${PN} += "/data/upper/*"
