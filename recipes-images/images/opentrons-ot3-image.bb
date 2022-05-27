@@ -52,6 +52,7 @@ IMAGE_INSTALL += " \
     opentrons-robot-server opentrons-update-server \
     python3 python3-misc python3-modules \
     ot3-overlay \
+    fs-overlay-init \
  "
 
 IMAGE_FEATURES += "read-only-rootfs"
