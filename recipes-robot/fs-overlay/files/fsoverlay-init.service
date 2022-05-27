@@ -5,4 +5,6 @@ Description=initialize overlays on boot
 Type=simple
 Requires=var.mount
 After=var.mount
+Requires=data.mount
+After=data.mount
 ExecStart=/bin/sh -c 'sleep 5 ; /usr/sbin/fsoverlay-init.sh'
