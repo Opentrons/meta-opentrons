@@ -3,6 +3,6 @@ Description=initialize overlays on boot
 
 [Service]
 Type=simple
-Requires=data.mount
-After=data.mount
+Requires=var.mount
+After=var.mount
 ExecStart=/bin/sh -c 'sleep 5 ; /usr/sbin/fsoverlay-init.sh'
