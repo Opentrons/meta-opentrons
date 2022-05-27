@@ -1,5 +1,5 @@
 SUMMARY = "fs overlay initialization script"
-DESCRIPTION = "Script to do any first boot init, started as a systemd service which removes itself once finished"
+DESCRIPTION = "Script to initialize fs overlays"
 # todo: change to APACHE-2 once qa check-sum error work around is figured out
 LICENSE = "CLOSED"
 PR = "r3"
