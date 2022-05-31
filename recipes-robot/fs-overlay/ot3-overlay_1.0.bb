@@ -1,5 +1,6 @@
-# change to APACHE-2 and get rid of qa check-sum errors 
-LICENSE = "CLOSED"
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM ?= "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+SUMMARY = "ot3 fs overlay partition mount service"
 BB_STRICT_CHECKSUM = "0"
 DEPENDS = "ot3-overlay-mount-points"
 inherit systemd

@@ -1,6 +1,6 @@
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM ?= "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 SUMMARY = "ot3 overlay mount point directory structure"
-# change to APACHE-2 and get rid of qa check-sum errors
-LICENSE = "CLOSED"
 BB_STRICT_CHECKSUM = "0"
 PV = "1.0"
 
