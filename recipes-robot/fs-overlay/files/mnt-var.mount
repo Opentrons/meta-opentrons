@@ -3,7 +3,7 @@ Description=Mount Upper dir for overlay on dedicated partition
 
 [Mount]
 What=/dev/mmcblk0p4
-Where=/data
+Where=/mnt/var
 Type=ext4
 Options=defaults
 

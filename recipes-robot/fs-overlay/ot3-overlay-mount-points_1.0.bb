@@ -9,12 +9,9 @@ S = "${WORKDIR}"
 inherit allarch
 
 do_install () {
-	# todo: making /etc read only would create issues for systemd and such - requires a work around.
-        install -d ${D}/data/
-        install -d ${D}/data/etc/
-        install -d ${D}/data/.work/etc/
-        install -d ${D}/data/var/
-        install -d ${D}/data/.work/var/
+	# mount point is /mnt/var which is overlayed on /var
+        install -d ${D}/mnt/var/
+        install -d ${D}/mnt/var/.work/
 }
 
-FILES_${PN} += "/data/* /data/.work/*"
+FILES_${PN} += "/mnt/var/* /mnt/var/.work/*"

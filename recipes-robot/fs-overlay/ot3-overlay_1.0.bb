@@ -5,10 +5,10 @@ BB_STRICT_CHECKSUM = "0"
 DEPENDS = "ot3-overlay-mount-points"
 inherit systemd
 SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_SERVICE_${PN} = "data.mount"
+SYSTEMD_SERVICE_${PN} = "mnt-var.mount"
 
-SRC_URI_append = " file://data.mount "
-FILES_${PN} += "${systemd_unitdir}/system/data.mount"
+SRC_URI_append = " file://mnt-var.mount "
+FILES_${PN} += "${systemd_unitdir}/system/mnt-var.mount"
 
 do_install_append() {
   install -d ${D}/${systemd_unitdir}/system
