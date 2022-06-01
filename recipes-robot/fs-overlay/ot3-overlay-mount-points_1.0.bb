@@ -9,9 +9,8 @@ S = "${WORKDIR}"
 inherit allarch
 
 do_install () {
-	# mount point is /mnt/var which is overlayed on /var
         install -d ${D}/mnt/var/
         install -d ${D}/mnt/var/.work/
 }
 
-FILES_${PN} += "/mnt/var/* /mnt/var/.work/*"
+FILES_${PN} += "/mnt/* mnt/var/.work/*"

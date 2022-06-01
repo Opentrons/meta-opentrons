@@ -5,7 +5,7 @@ Description=Mount Upper dir for overlay on dedicated partition
 What=/dev/mmcblk0p4
 Where=/mnt/var
 Type=ext4
-Options=defaults
+Options=upperdir=/mnt/var.lowerdir=/var,workdir=/mnt/.work/var
 
 [Install]
 WantedBy=multi-user.target
