@@ -9,8 +9,12 @@ S = "${WORKDIR}"
 inherit allarch
 
 do_install () {
-        install -d ${D}/var/
-        install -d ${D}/var/.work/
+	install -d ${D}/var/
+	install -d ${D}/var/etc/
+	install -d ${D}/var/home/
+	install -d ${D}/var/.work/
+	install -d ${D}/var/.work/etc/
+	install -d ${D}/var/.work/home/
 }
 
 FILES_${PN} += "/var/* /var/.work/*"
