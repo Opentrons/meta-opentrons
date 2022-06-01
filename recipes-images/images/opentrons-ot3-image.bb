@@ -1,4 +1,4 @@
-SUMMARY = "Opentrons OT3 Image"
+SMMARY = "Opentrons OT3 Image"
 DESCRIPTION = "Opentrons OT3 Robot Image"
 
 LICENSE = "apache-2"
@@ -54,6 +54,7 @@ IMAGE_INSTALL += " \
     ot3-overlay \
  "
 
+IMAGE_FEATURES += "read-only-rootfs"
 do_image_zip() {
     cd ${DEPLOY_DIR_IMAGE}/
     /bin/pwd

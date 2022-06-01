@@ -9,8 +9,8 @@ S = "${WORKDIR}"
 inherit allarch
 
 do_install () {
-        install -d ${D}/mnt/var/
-        install -d ${D}/mnt/var/.work/
+        install -d ${D}/var/
+        install -d ${D}/var/.work/
 }
 
-FILES_${PN} += "/mnt/* mnt/var/.work/*"
+FILES_${PN} += "/var/* /var/.work/*"
