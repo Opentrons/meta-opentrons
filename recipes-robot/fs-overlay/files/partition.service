@@ -1,0 +1,10 @@
+[Unit]
+Description=Setup partition for overlays and user data 
+Requires=var.mount
+After=var.mount
+
+[Service]
+ExecStart=/usr/sbin/setup-partition.sh
+
+[Install]
+RequiredBy=home.mount etc-data.mount

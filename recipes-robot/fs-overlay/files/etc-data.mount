@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount /etc/data/ overlay 
+Requires=partition.service
+After=partition.service
+
+[Mount]
+What=overlay
+Where=/etc/data
+Type=overlay
+Options=upperdir=/var/etc/data,lowerdir=/etc/data,workdir=/var/.work/etc/data
+
+[Install]
+WantedBy=multi-user.target
+
