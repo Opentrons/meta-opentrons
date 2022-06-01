@@ -12,5 +12,5 @@ FILES_${PN} += "${systemd_unitdir}/system/mnt-var.mount"
 
 do_install_append() {
   install -d ${D}/${systemd_unitdir}/system
-  install -m 0644 ${WORKDIR}/data.mount ${D}/${systemd_unitdir}/system
+  install -m 0644 ${WORKDIR}/mnt-var.mount ${D}/${systemd_unitdir}/system
 }
