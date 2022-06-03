@@ -1,0 +1,10 @@
+[Unit]
+Description=Setup directories for overlays
+Requires=var.mount
+After=var.mount
+
+[Service]
+ExecStart=/usr/local/bin/setup-overlay-dirs.sh
+
+[Install]
+WantedBy=var.mount
