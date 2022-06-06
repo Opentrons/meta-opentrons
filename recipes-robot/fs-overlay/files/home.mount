@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount /home overlay 
+Requires=var.mount
+After=var.mount
+
+[Mount]
+What=overlay
+Where=/home
+Type=overlay
+Options=upperdir=/home,lowerdir=/var/home,workdir=/var/.work/home
+
+[Install]
+WantedBy=multi-user.target
+

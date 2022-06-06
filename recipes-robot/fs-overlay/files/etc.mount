@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount /etc overlay 
+Requires=var.mount
+After=var.mount
+
+[Mount]
+What=overlay
+Where=/etc
+Type=overlay
+Options=upperdir=/etc,lowerdir=/var/etc,workdir=/var/.work/etc
+
+[Install]
+WantedBy=multi-user.target
+

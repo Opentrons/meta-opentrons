@@ -1,0 +1,9 @@
+[Unit]
+Description=Setup partition for overlays and user data 
+
+[Service]
+ExecStart=/usr/sbin/setup-partition.sh
+
+[Install]
+WantedBy=multi-user.target
+

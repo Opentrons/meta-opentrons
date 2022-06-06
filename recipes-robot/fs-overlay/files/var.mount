@@ -1,5 +1,7 @@
 [Unit]
-Description=Mount Upper dir for overlay on dedicated partition
+Description=Mount var on dedicated partition which acts as persistent storage
+Requires=partition.service
+After=partition.service
 
 [Mount]
 What=/dev/mmcblk0p4
