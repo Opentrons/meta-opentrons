@@ -7,4 +7,4 @@ After=var.mount
 ExecStart=/usr/sbin/setup-partition.sh
 
 [Install]
-RequiredBy=home.mount etc-data.mount
+RequiredBy=home.mount

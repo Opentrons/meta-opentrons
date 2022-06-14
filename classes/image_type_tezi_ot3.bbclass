@@ -31,6 +31,7 @@ TEZI_ROOT_LABEL ??= "RFS"
 TEZI_ROOT_NAME ??= "rootfs"
 TEZI_ROOT_LABEL2 ??= "RFS2"
 TEZI_ROOT_NAME2 ??= "rootfs2"
+TEZI_PART_LABEL ??= "VAR_PART"
 TEZI_ROOT_SUFFIX ??= "tar.xz"
 TEZI_USE_BOOTFILES ??= "true"
 TEZI_AUTO_INSTALL ??= "false"
@@ -193,6 +194,19 @@ def rootfs_tezi_emmc(d, use_bootfiles):
               "mkfs_options": "-E nodiscard",
               "filename": imagename + "." + d.getVar('TEZI_ROOT_SUFFIX'),
               "uncompressed_size": get_uncompressed_size(d, d.getVar('TEZI_ROOT_NAME2'))
+            }
+          })
+
+    filesystem_partitions.append(
+          {
+            "partition_size_nominal": 8072,
+            "want_maximised": False,
+            "content": {
+              "label": d.getVar('TEZI_PART_LABEL'),
+              "filesystem_type": d.getVar('TEZI_ROOT_FSTYPE'),
+              "mkfs_options": "-E nodiscard",
+              "filename": "",
+              "uncompressed_size": ""
             }
           })
 
