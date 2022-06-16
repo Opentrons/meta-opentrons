@@ -45,6 +45,6 @@ do_install_append () {
 
 FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d ${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf"
 
-RDEPENDS_${PN} += " python3-numpy python3-systemd nginx python-can python3-pyzmq "
+RDEPENDS_${PN} += " python3-numpy python3-systemd nginx python-can python3-pyzmq libgpiod-python"
 
 inherit pipenv_app_bundle
