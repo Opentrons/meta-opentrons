@@ -205,8 +205,8 @@ def rootfs_tezi_emmc(d, use_bootfiles):
               "label": d.getVar('TEZI_PART_LABEL'),
               "filesystem_type": d.getVar('TEZI_ROOT_FSTYPE'),
               "mkfs_options": "-E nodiscard",
-              "filename": "",
-              "uncompressed_size": ""
+              "filename": "var.tar.xz",
+              "uncompressed_size": get_uncompressed_size(d, 'var.tar.xz')
             }
           })
 
