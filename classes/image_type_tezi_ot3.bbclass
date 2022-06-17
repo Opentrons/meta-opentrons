@@ -8,10 +8,10 @@
 WKS_FILE_DEPENDS_append = " tezi-metadata virtual/dtb"
 DEPENDS += "${WKS_FILE_DEPENDS}"
 IMAGE_BOOT_FILES_REMOVE = "${@make_dtb_boot_files(d) if d.getVar('KERNEL_IMAGETYPE') == 'fitImage' else ''}"
-IMAGE_BOOT_FILES_REMOVE_apalis-tk1 = "${@ d.getVar('KERNEL_DEVICETREE') if d.getVar('KERNEL_IMAGETYPE') == 'fitImage' else ''}"
 IMAGE_BOOT_FILES_append = " overlays.txt ${@'' if d.getVar('KERNEL_IMAGETYPE') == 'fitImage' else 'overlays/*;overlays/'}"
 IMAGE_BOOT_FILES_remove = "${IMAGE_BOOT_FILES_REMOVE}"
 
+UBOOT_BINARY_TEZI_EMMC ?= "${UBOOT_BINARY}"
 RM_WORK_EXCLUDE += "${PN}"
 
 # set defaults if not building with a Toradex distro
@@ -27,24 +27,27 @@ TEZI_VERSION ?= "${DISTRO_VERSION}"
 TEZI_DATE ?= "${TDX_MATRIX_BUILD_TIME}"
 TEZI_IMAGE_NAME ?= "${IMAGE_NAME}"
 TEZI_ROOT_FSTYPE ??= "ext4"
-TEZI_ROOT_LABEL ??= "RFS"
-TEZI_ROOT_NAME ??= "rootfs"
+TEZI_ROOT_SUFFIX ??= "tar.xz"
+TEZI_ROOT_LABEL1 ??= "RFS1"
+TEZI_ROOT_NAME1 ??= "rootfs1"
 TEZI_ROOT_LABEL2 ??= "RFS2"
 TEZI_ROOT_NAME2 ??= "rootfs2"
-TEZI_PART_LABEL ??= "VAR_PART"
-TEZI_ROOT_SUFFIX ??= "tar.xz"
+
+TEZI_VAR_SUFFIX ??= "tar.xz"
+TEZI_VAR_FSTYPE ??= "ext4"
+TEZI_VAR_LABEL ??= "VARFS"
+TEZI_VAR_NAME ??= "varfs"
+
+
 TEZI_USE_BOOTFILES ??= "true"
-TEZI_AUTO_INSTALL ??= "false"
+TEZI_AUTO_INSTALL ??= "true"
 TEZI_BOOT_SUFFIX ??= "${@'bootfs.tar.xz' if oe.types.boolean('${TEZI_USE_BOOTFILES}') else ''}"
-TEZI_CONFIG_FORMAT ??= "2"
 # Require newer Tezi for mx8 Socs with the u-boot environment bugfix
-TEZI_CONFIG_FORMAT_mx8 ??= "4"
+TEZI_CONFIG_FORMAT ??= "4"
 TORADEX_FLASH_TYPE ??= "emmc"
-UBOOT_BINARY_TEZI_EMMC ?= "${UBOOT_BINARY}"
-UBOOT_BINARY_TEZI_RAWNAND ?= "${UBOOT_BINARY}"
+
 UBOOT_ENV_TEZI ?= "${@ 'u-boot-initial-env-%s' % d.getVar('UBOOT_CONFIG') if d.getVar('UBOOT_CONFIG') else 'u-boot-initial-env'}"
 UBOOT_ENV_TEZI_EMMC ?= "${UBOOT_ENV_TEZI}"
-UBOOT_ENV_TEZI_RAWNAND ?= "${UBOOT_ENV_TEZI}"
 
 # use DISTRO_FLAVOUR to append to the image name displayed in TEZI
 DISTRO_FLAVOUR ??= ""
@@ -171,16 +174,17 @@ def rootfs_tezi_emmc(d, use_bootfiles):
                 }
               })
 
+    # Two rootfs partitions for a/b updates
     filesystem_partitions.append(
           {
             "partition_size_nominal": 3072,
             "want_maximised": False,
             "content": {
-              "label": d.getVar('TEZI_ROOT_LABEL'),
+              "label": d.getVar('TEZI_ROOT_LABEL1'),
               "filesystem_type": d.getVar('TEZI_ROOT_FSTYPE'),
               "mkfs_options": "-E nodiscard",
               "filename": imagename + "." + d.getVar('TEZI_ROOT_SUFFIX'),
-              "uncompressed_size": get_uncompressed_size(d, d.getVar('TEZI_ROOT_NAME'))
+              "uncompressed_size": get_uncompressed_size(d, d.getVar('TEZI_ROOT_NAME1'))
             }
           })
     
@@ -197,16 +201,17 @@ def rootfs_tezi_emmc(d, use_bootfiles):
             }
           })
 
+    # One partition at the end for user data mounted on /var
     filesystem_partitions.append(
           {
-            "partition_size_nominal": 8072,
-            "want_maximised": False,
+            "partition_size_nominal": 1024,
+            "want_maximised": True,
             "content": {
-              "label": d.getVar('TEZI_PART_LABEL'),
-              "filesystem_type": d.getVar('TEZI_ROOT_FSTYPE'),
+              "label": d.getVar('TEZI_VAR_LABEL'),
+              "filesystem_type": d.getVar('TEZI_VAR_FSTYPE'),
               "mkfs_options": "-E nodiscard",
-              "filename": "",
-              "uncompressed_size": ""
+              "filename": "var.tar.xz",
+              "uncompressed_size": get_uncompressed_size(d, 'var.tar.xz')
             }
           })
 
@@ -224,85 +229,6 @@ def rootfs_tezi_emmc(d, use_bootfiles):
           }
         })]
 
-
-def rootfs_tezi_rawnand(d):
-    from collections import OrderedDict
-    imagename = d.getVar('IMAGE_LINK_NAME')
-
-    uboot1 = OrderedDict({
-               "name": "u-boot1",
-               "content": {
-                 "rawfile": {
-                   "filename": d.getVar('UBOOT_BINARY_TEZI_RAWNAND'),
-                   "size": 1
-                 }
-               },
-             })
-
-    uboot2 = OrderedDict({
-               "name": "u-boot2",
-               "content": {
-                 "rawfile": {
-                   "filename": d.getVar('UBOOT_BINARY_TEZI_RAWNAND'),
-                   "size": 1
-                 }
-               }
-             })
-
-    env = OrderedDict({
-        "name": "u-boot-env",
-        "erase": True,
-        "content": {}
-    })
-
-    rootfs = {
-               "name": "rootfs",
-               "content": {
-                 "filesystem_type": "ubifs",
-                 "filename": imagename + "." + d.getVar('TEZI_ROOT_SUFFIX'),
-                 "uncompressed_size": get_uncompressed_size(d, d.getVar('TEZI_ROOT_NAME'))
-               }
-             }
-
-    kernel = {
-               "name": "kernel",
-               "size_kib": 8192,
-               "type": "static",
-               "content": {
-                 "rawfile": {
-                   "filename": d.getVar('KERNEL_IMAGETYPE'),
-                   "size": 5
-                 }
-               }
-             }
-
-    # Use device tree mapping to create product id <-> device tree relationship
-    dtmapping = d.getVarFlags('TORADEX_PRODUCT_IDS')
-    dtfiles = []
-    for f, v in dtmapping.items():
-        dtfiles.append({ "filename": v, "product_ids": f })
-
-    dtb = {
-            "name": "dtb",
-            "content": {
-              "rawfiles": dtfiles
-            },
-            "size_kib": 128,
-            "type": "static"
-          }
-
-    m4firmware = {
-                   "name": "m4firmware",
-                   "size_kib": 896,
-                   "type": "static"
-                 }
-
-    ubi = OrderedDict({
-            "name": "ubi",
-            "ubivolumes": [kernel, dtb, m4firmware, rootfs]
-          })
-
-    return [uboot1, uboot2, env, ubi]
 
 def rootfs_tezi_json(d, flash_type, flash_data, json_file, uenv_file):
     import json
@@ -346,10 +272,10 @@ def rootfs_tezi_json(d, flash_type, flash_data, json_file, uenv_file):
     else:
         data["supported_product_ids"].extend(product_ids.split())
 
-    if flash_type == "rawnand":
-        data["mtddevs"] = flash_data
-    elif flash_type == "emmc":
+    if flash_type == "emmc":
         data["blockdevs"] = flash_data
+    else:
+        bb.fatal("Toradex flash type %s not valid" % flash_type)
 
     with open(os.path.join(d.getVar('IMGDEPLOYDIR'), json_file), 'w') as outfile:
         json.dump(data, outfile, indent=4)
@@ -362,12 +288,7 @@ python rootfs_tezi_run_json() {
     if len(flash_type.split()) > 1:
         bb.fatal("This class only supports a single flash type.")
 
-    if flash_type == "rawnand":
-        flash_data = rootfs_tezi_rawnand(d)
-        uenv_file = d.getVar('UBOOT_ENV_TEZI_RAWNAND')
-        uboot_file = d.getVar('UBOOT_BINARY_TEZI_RAWNAND')
-        artifacts += " " + d.getVar('KERNEL_IMAGETYPE') + " " + d.getVar('KERNEL_DEVICETREE')
-    elif flash_type == "emmc":
+    if flash_type == "emmc":
         use_bootfiles = oe.types.boolean(d.getVar('TEZI_USE_BOOTFILES'))
         flash_data = rootfs_tezi_emmc(d, use_bootfiles)
         uenv_file = d.getVar('UBOOT_ENV_TEZI_EMMC')
@@ -376,7 +297,7 @@ python rootfs_tezi_run_json() {
         uboot_file += " " + d.getVar('SPL_BINARY') if d.getVar('OFFSET_SPL_PAYLOAD') else ""
         artifacts += " " + "%s/%s.%s" % (d.getVar('IMGDEPLOYDIR'), d.getVar('IMAGE_LINK_NAME'), d.getVar('TEZI_BOOT_SUFFIX')) if use_bootfiles else ""
     else:
-        bb.fatal("Toradex flash type unknown")
+        bb.fatal("Toradex flash type %s not valid" % flash_type)
 
     artifacts += " " + uenv_file + " " + uboot_file
     d.setVar("TEZI_ARTIFACTS", artifacts)
