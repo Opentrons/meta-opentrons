@@ -11,6 +11,10 @@
 / {
 	compatible = "toradex,verdin-imx8mm";
 };
+// http://git.toradex.com/cgit/linux-toradex.git/commit/?id=226073276f6be24718d364b0cfd12019c07cab14
+&clk40m {
+    clock-frequency = <20000000>;
+};
 
 /* Verdin CAN_1 and CAN_2 (on-module) */
 &ecspi3 {
@@ -26,7 +30,7 @@
 
 	can1: can@0 {
 		compatible = "microchip,mcp2517fd";
-		clocks = <&clk20m>;
+		clocks = <&clk40m>;
 		gpio-controller;
 		interrupt-parent = <&gpio1>;
 		interrupts = <6 2>;
@@ -40,7 +44,7 @@
 
 	can2: can@1 {
 		compatible = "microchip,mcp2517fd";
-		clocks = <&clk20m>;
+		clocks = <&clk40m>;
 		gpio-controller;
 		interrupt-parent = <&gpio1>;
 		interrupts = <7 2>;
