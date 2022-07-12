@@ -51,8 +51,10 @@ IMAGE_INSTALL += " \
     robot-app-wayland-launch robot-app \
     opentrons-robot-server opentrons-update-server \
     python3 python3-misc python3-modules \
+    ot3-overlay \
  "
 
+IMAGE_FEATURES += "read-only-rootfs"
 do_image_zip() {
     cd ${DEPLOY_DIR_IMAGE}/
     /bin/pwd
