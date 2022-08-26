@@ -30,6 +30,10 @@ IMAGE_INSTALL += " \
     timestamp-service \
     networkmanager crda \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
+    weston-xwayland weston weston-init imx-gpu-viv \
+    robot-app-wayland-launch robot-app \
+    opentrons-robot-server opentrons-update-server \
+    python3 python3-misc python3-modules \
  "
 
 #Prefix to the resulting deployable tarball name
@@ -74,7 +78,7 @@ do_create_filesystem() {
     dd if=/dev/zero of=${SYSTEMFS_OUTPUT} seek=${SYSTEMFS_SIZE}w bs=1024 count=0
     mkfs.ext4 -F ${SYSTEMFS_OUTPUT} -d ${SYSTEMFS_DIR}
 
-    dd if=/dev/zero of=${USERFS_OUTPUT} seek=${USERFS_SIZE} bs=1024
+    dd if=/dev/zero of=${USERFS_OUTPUT} seek=${USERFS_SIZE} bs=1024 count=0
     mkfs.ext4 -F ${USERFS_OUTPUT} -d ${USERFS_DIR}
 }
 IMAGE_POSTPROCESS_COMMAND += "do_create_filesystem;"
