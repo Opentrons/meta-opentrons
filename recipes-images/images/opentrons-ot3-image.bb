@@ -3,33 +3,16 @@ DESCRIPTION = "Opentrons OT3 Robot Image"
 
 LICENSE = "apache-2"
 
-inherit core-image
+inherit core-image image_type_tezi_ot3
 
-#Prefix to the resulting deployable tarball name
-export IMAGE_BASENAME = "opentrons-ot3-image"
-MACHINE_NAME ?= "${MACHINE}"
-IMAGE_NAME = "${MACHINE_NAME}_${IMAGE_BASENAME}"
+DEPENDS += "rsync-native"
 
-do_image_zip[depends] = "zip-native:do_populate_sysroot"
-addtask do_image_zip after do_image_complete before do_populate_lic_deploy
+IMAGE_LINGUAS = "en-us"
 # Copy Licenses to image /usr/share/common-license
 COPY_LIC_MANIFEST ?= "1"
 COPY_LIC_DIRS ?= "1"
 
 SYSTEMD_DEFAULT_TARGET = "graphical.target"
-
-add_rootfs_version () {
-    printf "${DISTRO_NAME} ${DISTRO_VERSION} (${DISTRO_CODENAME}) \\\n \\\l\n" > ${IMAGE_ROOTFS}/etc/issue
-    printf "${DISTRO_NAME} ${DISTRO_VERSION} (${DISTRO_CODENAME}) %%h\n" > ${IMAGE_ROOTFS}/etc/issue.net
-    printf "${IMAGE_NAME}\n\n" >> ${IMAGE_ROOTFS}/etc/issue
-    printf "${IMAGE_NAME}\n\n" >> ${IMAGE_ROOTFS}/etc/issue.net
-}
-# add the rootfs version to the welcome banner
-ROOTFS_POSTPROCESS_COMMAND += " add_rootfs_version;"
-
-IMAGE_LINGUAS = "en-us"
-#IMAGE_LINGUAS = "de-de fr-fr en-gb en-us pt-br es-es kn-in ml-in ta-in"
-
 
 IMAGE_INSTALL += " \
     packagegroup-boot \
@@ -47,11 +30,55 @@ IMAGE_INSTALL += " \
     timestamp-service \
     networkmanager crda \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
-    weston-xwayland weston weston-init imx-gpu-viv \
-    robot-app-wayland-launch robot-app \
-    opentrons-robot-server opentrons-update-server \
-    python3 python3-misc python3-modules \
  "
+
+#Prefix to the resulting deployable tarball name
+export IMAGE_BASENAME = "opentrons-ot3-image"
+MACHINE_NAME ?= "${MACHINE}"
+IMAGE_NAME = "${MACHINE_NAME}_${IMAGE_BASENAME}"
+SYSTEMFS_DIR = "${WORKDIR}/systemfs"
+USERFS_DIR = "${WORKDIR}/userfsfs"
+SYSTEMFS_OUTPUT = "${IMGDEPLOYDIR}/${IMAGE_NAME}.systemfs.ext4"
+USERFS_OUTPUT = "${IMGDEPLOYDIR}/${IMAGE_NAME}.userfs.ext4"
+
+do_create_filesystem_trees[depends] = "fakeroot-native:do_populate_sysroot"
+do_create_filesystem[depends] = "do_create_filesystem_trees"
+do_image_zip[depends] = "zip-native:do_populate_sysroot"
+addtask do_image_zip after do_image_complete before do_populate_lic_deploy
+
+add_rootfs_version () {
+    printf "${DISTRO_NAME} ${DISTRO_VERSION} (${DISTRO_CODENAME}) \\\n \\\l\n" > ${IMAGE_ROOTFS}/etc/issue
+    printf "${DISTRO_NAME} ${DISTRO_VERSION} (${DISTRO_CODENAME}) %%h\n" > ${IMAGE_ROOTFS}/etc/issue.net
+    printf "${IMAGE_NAME}\n\n" >> ${IMAGE_ROOTFS}/etc/issue
+    printf "${IMAGE_NAME}\n\n" >> ${IMAGE_ROOTFS}/etc/issue.net
+}
+# add the rootfs version to the welcome banner
+ROOTFS_POSTPROCESS_COMMAND += "add_rootfs_version;"
+
+fakeroot do_create_filesystem_trees() {
+    # this will create the systemfs tree
+    rsync -a ${IMAGE_ROOTFS}/ ${SYSTEMFS_DIR} --exclude 'home/' --exclude 'var/' --delete-excluded
+    # create the userfs tree
+    rsync -a ${IMAGE_ROOTFS}/home ${USERFS_DIR}/
+    rsync -a ${IMAGE_ROOTFS}/var ${USERFS_DIR}/
+}
+# create the filesystem trees
+IMAGE_PREPROCESS_COMMAND += "do_create_filesystem_trees;"
+
+do_create_filesystem() {
+    # get size of the filesystem trees
+    SYSTEMFS_SIZE=$(du -Lbks ${SYSTEMFS_DIR} | cut -f1)
+    USERFS_SIZE=$(du -Lbks ${USERFS_DIR} | cut -f1)
+  
+    # create sparse file a bit larger than source dir
+    dd if=/dev/zero of=${SYSTEMFS_OUTPUT} seek=${SYSTEMFS_SIZE}w bs=1024 count=0
+    mkfs.ext4 -F ${SYSTEMFS_OUTPUT} -d ${SYSTEMFS_DIR}
+
+    dd if=/dev/zero of=${USERFS_OUTPUT} seek=${USERFS_SIZE} bs=1024
+    mkfs.ext4 -F ${USERFS_OUTPUT} -d ${USERFS_DIR}
+}
+IMAGE_POSTPROCESS_COMMAND += "do_create_filesystem;"
+# create the actual filesystem
 
 do_image_zip() {
     cd ${DEPLOY_DIR_IMAGE}/
