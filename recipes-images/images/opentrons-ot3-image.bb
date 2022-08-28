@@ -78,7 +78,7 @@ do_create_filesystem() {
     dd if=/dev/zero of=${SYSTEMFS_OUTPUT} seek=${SYSTEMFS_SIZE}w bs=1024 count=0
     mkfs.ext4 -F ${SYSTEMFS_OUTPUT} -d ${SYSTEMFS_DIR}
 
-    dd if=/dev/zero of=${USERFS_OUTPUT} seek=${USERFS_SIZE} bs=1024 count=0
+    dd if=/dev/zero of=${USERFS_OUTPUT} seek=${USERFS_SIZE}b bs=1024 count=0
     mkfs.ext4 -F ${USERFS_OUTPUT} -d ${USERFS_DIR}
 }
 IMAGE_POSTPROCESS_COMMAND += "do_create_filesystem;"
