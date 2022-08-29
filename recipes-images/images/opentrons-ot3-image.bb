@@ -6,6 +6,7 @@ LICENSE = "apache-2"
 inherit core-image image_type_tezi_ot3
 
 DEPENDS += "rsync-native"
+IMAGE_FSTYPES += "teziimg ext4.xz"
 
 IMAGE_LINGUAS = "en-us"
 # Copy Licenses to image /usr/share/common-license
