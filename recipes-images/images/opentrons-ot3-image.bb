@@ -41,12 +41,13 @@ export IMAGE_BASENAME = "opentrons-ot3-image"
 MACHINE_NAME ?= "${MACHINE}"
 IMAGE_NAME = "${MACHINE_NAME}_${IMAGE_BASENAME}"
 SYSTEMFS_DIR = "${WORKDIR}/systemfs"
-USERFS_DIR = "${WORKDIR}/userfsfs"
+USERFS_DIR = "${WORKDIR}/userfs"
 SYSTEMFS_OUTPUT = "${IMGDEPLOYDIR}/${IMAGE_NAME}.systemfs.ext4"
 USERFS_OUTPUT = "${IMGDEPLOYDIR}/${IMAGE_NAME}.userfs.ext4"
 
 do_create_filesystem_trees[depends] = "fakeroot-native:do_populate_sysroot"
 do_create_filesystem[depends] = "do_create_filesystem_trees"
+do_compress_filesystem[depends] = "do_create_filesystem"
 do_image_zip[depends] = "zip-native:do_populate_sysroot"
 addtask do_image_zip after do_image_complete before do_populate_lic_deploy
 
@@ -73,7 +74,7 @@ do_create_filesystem() {
     # get size of the filesystem trees
     SYSTEMFS_SIZE=$(du -Lbks ${SYSTEMFS_DIR} | cut -f1)
     USERFS_SIZE=$(du -Lbks ${USERFS_DIR} | cut -f1)
-  
+ 
     # create sparse file a bit larger than source dir
     dd if=/dev/zero of=${SYSTEMFS_OUTPUT} seek=${SYSTEMFS_SIZE}w bs=1024 count=0
     mkfs.ext4 -F ${SYSTEMFS_OUTPUT} -d ${SYSTEMFS_DIR}
@@ -84,10 +85,20 @@ do_create_filesystem() {
 IMAGE_POSTPROCESS_COMMAND += "do_create_filesystem;"
 # create the actual filesystem
 
+do_compress_filesystem() {
+    tar --xattrs --xattrs-include=* --numeric-owner -cf ${IMGDEPLOYDIR}/${IMAGE_NAME}.systemfs.tar -C ${WORKDIR}/systemfs ./
+    tar --xattrs --xattrs-include=* --numeric-owner -cf ${IMGDEPLOYDIR}/${IMAGE_NAME}.userfs.tar -C ${WORKDIR}/userfs ./
+
+    # compress
+    xz -f -k -c -9 ${XZ_DEFAULTS} --check=crc32 ${IMGDEPLOYDIR}/${IMAGE_NAME}.systemfs.tar > ${IMGDEPLOYDIR}/${IMAGE_NAME}.systemfs.tar.xz
+    xz -f -k -c -9 ${XZ_DEFAULTS} --check=crc32 ${IMGDEPLOYDIR}/${IMAGE_NAME}.userfs.tar > ${IMGDEPLOYDIR}/${IMAGE_NAME}.userfs.tar.xz
+    xz -f -k -c -9 ${XZ_DEFAULTS} --check=crc32 ${IMGDEPLOYDIR}/${IMAGE_NAME}.systemfs.ext4 > ${IMGDEPLOYDIR}/${IMAGE_NAME}.systemfs.ext4.xz
+}
+# compress the filesystem
+IMAGE_POSTPROCESS_COMMAND += "do_compress_filesystem;"
+
 do_image_zip() {
     cd ${DEPLOY_DIR_IMAGE}/
-    /bin/pwd
-    ls -l
-    sha256sum ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext4.xz > rootfs.xz.256
-    zip ot3-system.zip ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext4.xz rootfs.xz.256
+    sha256sum ${IMAGE_NAME}.systemfs.ext4.xz > rootfs.xz.256
+    zip ot3-system.zip ${IMAGE_NAME}.systemfs.ext4.xz rootfs.xz.256
 }
