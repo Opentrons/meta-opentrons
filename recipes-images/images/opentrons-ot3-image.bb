@@ -58,12 +58,13 @@ ROOTFS_POSTPROCESS_COMMAND += "add_rootfs_version;"
 # split the rootfs into systemfs and userfs
 fakeroot do_create_filesystem_trees() {
     # this will create the systemfs tree
-    rsync -a ${IMAGE_ROOTFS}/ ${SYSTEMFS_DIR} --exclude 'home/' --exclude 'var/' --delete-excluded
+    rsync -a ${IMAGE_ROOTFS}/ ${SYSTEMFS_DIR}
+
     # create the userfs tree
     rsync -a ${IMAGE_ROOTFS}/home ${USERFS_DIR}/
     rsync -a ${IMAGE_ROOTFS}/var ${USERFS_DIR}/
 }
-IMAGE_PREPROCESS_COMMAND += "do_create_filesystem_trees;"
+IMAGE_POSTPROCESS_COMMAND += "do_create_filesystem_trees;"
 
 # create the ext4 filesystem
 do_create_filesystem() {
@@ -102,7 +103,7 @@ python do_create_tezi_manifest(){
                 },
                 {
                     "partition_size_nominal": 3072,
-                    "want_maximised": False,
+                    "want_maximised": True,
                     "content": {
                         "label": "RFS",
                         "filesystem_type": "ext4",
@@ -113,7 +114,7 @@ python do_create_tezi_manifest(){
                 },
                 {
                     "partition_size_nominal": 3072,
-                    "want_maximised": False,
+                    "want_maximised": True,
                     "content": {
                         "label": "RFS2",
                         "filesystem_type": "ext4",
@@ -140,18 +141,20 @@ python do_create_tezi_manifest(){
 # create the tezi ot3 image
 do_create_tezi_ot3() {
     # create the systemfs tarball
-    tar --xattrs --xattrs-include=* --numeric-owner -cf ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.systemfs.tar -C ${SYSTEMFS_DIR} ./
-    tar --xattrs --xattrs-include=* --numeric-owner -cf ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.userfs.tar -C ${USERFS_DIR} ./
+    tar --xattrs --xattrs-include=* --sort=name --format=posix --numeric-owner -cf ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.systemfs.tar -C ${SYSTEMFS_DIR} ./
+    tar --xattrs --xattrs-include=* --sort=name --format=posix --numeric-owner -cf ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.userfs.tar -C ${USERFS_DIR} ./
 
     # compress
     xz -f -k -c -9 ${XZ_DEFAULTS} --check=crc32 ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.systemfs.tar > ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.systemfs.tar.xz
     xz -f -k -c -9 ${XZ_DEFAULTS} --check=crc32 ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.userfs.tar > ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.userfs.tar.xz
 
     # create the tezi tarball
-    tar --xattrs --xattrs-include=* --numeric-owner -chf  \
-    ${DEPLOY_DIR_IMAGE}/${TEZI_IMAGE_NAME}-Tezi_${TEZI_VERSION}.tar -C ${DEPLOY_DIR_IMAGE} toradexlinux.png marketing.tar \
-    prepare.sh wrapup.sh ${IMAGE_LINK_NAME}.systemfs.tar.xz ${IMAGE_LINK_NAME}.bootfs.tar.xz u-boot-initial-env-sd \
-    imx-boot image.json
+    tar --xattrs --xattrs-include=* --numeric-owner --transform \
+    's,^,${TEZI_IMAGE_NAME}-Tezi_${TEZI_VERSION}/,' -chf  \
+    ${DEPLOY_DIR_IMAGE}/${TEZI_IMAGE_NAME}-Tezi_${TEZI_VERSION}.tar -C \
+    ${DEPLOY_DIR_IMAGE} toradexlinux.png marketing.tar prepare.sh wrapup.sh \
+    LA_OPT_NXP_SW.html ${IMAGE_LINK_NAME}.systemfs.tar.xz ${IMAGE_LINK_NAME}.userfs.tar.xz \
+    ${IMAGE_LINK_NAME}.bootfs.tar.xz u-boot-initial-env-sd imx-boot image.json
 }
 
 # create the opentrons ot3 manifest
@@ -196,7 +199,7 @@ do_create_opentrons_ot3() {
     VERSION.json
 }
 
-do_create_filesystem_trees[prefuncs] += "add_rootfs_version"
+do_create_filesystem_trees[depends] += "virtual/fakeroot-native:do_populate_sysroot"
 do_create_filesystem[prefuncs] += "do_create_filesystem_trees"
 do_create_tezi_ot3[dirs] += "${DEPLOY_DIR_IMAGE}"
 do_create_tezi_manifest[dirs] += "${DEPLOY_DIR_IMAGE}"
