@@ -32,6 +32,9 @@ IMAGE_INSTALL += " \
     networkmanager crda \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
     weston-xwayland weston weston-init imx-gpu-viv \
+    robot-app-wayland-launch robot-app \
+    opentrons-robot-server opentrons-update-server \
+    python3 python3-misc python3-modules \
  "
 
 # Prefix to the resulting deployable tarball name
@@ -52,18 +55,14 @@ add_rootfs_version() {
 }
 ROOTFS_POSTPROCESS_COMMAND += "add_rootfs_version;"
 
-# split the rootfs into systemfs and userfs
-fakeroot do_create_filesystem_trees() {
+fakeroot do_create_filesystem() {
     # this will create the systemfs tree
-    rsync -a ${IMAGE_ROOTFS}/ ${SYSTEMFS_DIR}
+    rsync -aH --chown=root:root ${IMAGE_ROOTFS}/ ${SYSTEMFS_DIR}
 
     # create the userfs tree
-    rsync -a ${IMAGE_ROOTFS}/home ${USERFS_DIR}/
-    rsync -a ${IMAGE_ROOTFS}/var ${USERFS_DIR}/
-}
+    rsync -aH --chown=root:root ${IMAGE_ROOTFS}/home ${USERFS_DIR}/
+    rsync -aH --chown=root:root ${IMAGE_ROOTFS}/var ${USERFS_DIR}/
 
-# create the filesystem
-fakeroot do_create_filesystem() {
     # get size of the filesystem trees
     SYSTEMFS_SIZE=$(du -Lbks ${SYSTEMFS_DIR} | cut -f1)
     USERFS_SIZE=$(du -Lbks ${USERFS_DIR} | cut -f1)
@@ -76,7 +75,7 @@ fakeroot do_create_filesystem() {
     mkfs.ext4 -F ${USERFS_OUTPUT} -d ${USERFS_DIR}
 
     # compress the systemfs.ext4
-    xz -f -k -c -9 ${XZ_DEFAULTS} --check=crc32 ${SYSTEMFS_OUTPUT} > ${SYSTEMFS_OUTPUT}.xz
+    xz -f -k -c -9 ${XZ_DEFAULTS} --check=crc32 ${SYSTEMFS_OUTPUT} > ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.systemfs.ext4.xz
 
     # create the systemfs and userfs tarball
     tar --xattrs --xattrs-include=* --sort=name --format=posix --numeric-owner -cf ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.systemfs.tar -C ${SYSTEMFS_DIR} ./
@@ -179,7 +178,7 @@ python do_create_opentrons_manifest() {
 }
 
 # create the tezi ot3 image
-do_create_tezi_ot3() {
+fakeroot do_create_tezi_ot3() {
     tar --xattrs --xattrs-include=* --numeric-owner --transform \
     's,^,${TEZI_IMAGE_NAME}-Tezi_${TEZI_VERSION}/,' -chf  \
     ${DEPLOY_DIR_IMAGE}/${TEZI_IMAGE_NAME}-Tezi_${TEZI_VERSION}.tar -C \
@@ -200,18 +199,18 @@ do_create_opentrons_ot3() {
     VERSION.json
 }
 
-do_create_filesystem_trees[depends] += "virtual/fakeroot-native:do_populate_sysroot"
 do_create_filesystem[depends] += "virtual/fakeroot-native:do_populate_sysroot"
-do_create_filesystem[prefuncs] += "do_create_filesystem_trees"
+do_create_tezi_ot3[cleandirs] += "virtual/fakeroot-native:do_populate_sysroot"
 do_create_tezi_ot3[dirs] += "${DEPLOY_DIR_IMAGE}"
 do_create_tezi_manifest[dirs] += "${DEPLOY_DIR_IMAGE}"
 do_create_tezi_manifest[prefuncs] += "do_image_teziimg"
-do_create_tezi_ot3[prefuncs] += "do_image_teziimg"
+do_create_tezi_ot3[prefuncs] += "do_image_teziimg do_create_filesystem"
+do_create_opentrons_ot3[prefuncs] += "do_create_filesystem"
 do_create_opentrons_manifest[cleandirs] += "${DIPLOY_DIR_IMAGE}/opentrons-versions/"
 do_create_opentrons_ot3[dirs] += "${DIPLOY_DIR_IMAGE}"
 
-addtask do_create_filesystem_trees after do_image_complete before do_populate_lic_deploy
-addtask do_create_tezi_manifest after do_create_filesystem_trees before do_populate_lic_deploy
+addtask do_create_filesystem after do_image_complete before do_populate_lic_deploy
+addtask do_create_tezi_manifest after do_create_filesystem before do_populate_lic_deploy
 addtask do_create_tezi_ot3 after do_create_tezi_manifest before do_populate_lic_deploy
 addtask do_create_opentrons_manifest after do_create_tezi_ot3 before do_populate_lic_deploy
 addtask do_create_opentrons_ot3 after do_create_opentrons_manifest before do_populate_lic_deploy
