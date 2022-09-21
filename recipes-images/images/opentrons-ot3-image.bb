@@ -32,7 +32,7 @@ IMAGE_INSTALL += " \
     networkmanager crda \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'timestamp-service systemd-analyze', '', d)} \
     weston-xwayland weston weston-init imx-gpu-viv \
-    robot-app-wayland-launch robot-app \
+    userfs-mount robot-app-wayland-launch robot-app \
     opentrons-robot-server opentrons-update-server \
     python3 python3-misc python3-modules \
  "
@@ -57,11 +57,13 @@ ROOTFS_POSTPROCESS_COMMAND += "add_rootfs_version;"
 
 fakeroot do_create_filesystem() {
     # this will create the systemfs tree
-    rsync -aH --chown=root:root ${IMAGE_ROOTFS}/ ${SYSTEMFS_DIR}
+    rsync -aH --chown=root:root ${IMAGE_ROOTFS}/ ${SYSTEMFS_DIR} \
+    --exclude='/home/*' --exclude '/var/*' --delete-excluded
 
     # create the userfs tree
     rsync -aH --chown=root:root ${IMAGE_ROOTFS}/home ${USERFS_DIR}/
     rsync -aH --chown=root:root ${IMAGE_ROOTFS}/var ${USERFS_DIR}/
+    mkdir -p ${USERFS_DIR}/data
 
     # get size of the filesystem trees
     SYSTEMFS_SIZE=$(du -Lbks ${SYSTEMFS_DIR} | cut -f1)
@@ -205,8 +207,8 @@ do_create_tezi_ot3[dirs] += "${DEPLOY_DIR_IMAGE}"
 do_create_tezi_manifest[dirs] += "${DEPLOY_DIR_IMAGE}"
 do_create_tezi_manifest[prefuncs] += "do_image_teziimg"
 do_create_tezi_ot3[prefuncs] += "do_image_teziimg do_create_filesystem"
-do_create_opentrons_ot3[prefuncs] += "do_create_filesystem"
 do_create_opentrons_manifest[cleandirs] += "${DIPLOY_DIR_IMAGE}/opentrons-versions/"
+do_create_opentrons_ot3[prefuncs] += "do_create_filesystem"
 do_create_opentrons_ot3[dirs] += "${DIPLOY_DIR_IMAGE}"
 
 addtask do_create_filesystem after do_image_complete before do_populate_lic_deploy
