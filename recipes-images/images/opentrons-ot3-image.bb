@@ -109,7 +109,7 @@ python do_create_tezi_manifest(){
                     }
                 },
                 {
-                    "partition_size_nominal": 2048,
+                    "partition_size_nominal": 1536,
                     "want_maximised": False,
                     "content": {
                         "label": "RFS",
@@ -119,7 +119,7 @@ python do_create_tezi_manifest(){
                     }
                 },
                 {
-                    "partition_size_nominal": 2048,
+                    "partition_size_nominal": 1536,
                     "want_maximised": False,
                     "content": {
                         "label": "RFS2",
