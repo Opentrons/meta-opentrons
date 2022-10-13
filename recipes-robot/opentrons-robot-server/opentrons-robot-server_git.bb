@@ -53,6 +53,6 @@ FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d
                        ${sysconfdir}/udev/rules.d/95-opentrons-modules.rules \
                        "
 
-RDEPENDS_${PN} += " udev python3-numpy python3-systemd nginx python-can python3-pyzmq libgpiod-python"
+RDEPENDS_${PN} += " udev python3-numpy python3-systemd nginx python-can python3-pyzmq libgpiod-python python-aionotify"
 
 inherit pipenv_app_bundle
