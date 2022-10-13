@@ -21,7 +21,7 @@ inherit insane systemd get_ot_package_version
 SYSTEMD_AUTO_ENABLE = "enable"
 SYSTEMD_SERVICE_${PN} = "opentrons-robot-server.service opentrons-ot3-canbus.service"
 FILESEXTRAPATHS_prepend = "${THISDIR}/files:"
-SRC_URI_append = " file://opentrons-robot-server.service file://opentrons-ot3-canbus.service"
+SRC_URI_append = " file://opentrons-robot-server.service file://opentrons-ot3-canbus.service file://95-opentrons-modules.rules"
 
 PIPENV_APP_BUNDLE_PROJECT_ROOT = "${S}/robot-server"
 PIPENV_APP_BUNDLE_DIR = "/opt/opentrons-robot-server"
@@ -44,10 +44,15 @@ do_install_append () {
     install -d ${D}${systemd_system_unitdir}/opentrons-robot-server.service.d
     install -m 0644 ${B}/robot-server-version.conf ${D}${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf
     install -m 0644 ${WORKDIR}/opentrons-ot3-canbus.service ${D}${systemd_system_unitdir}/opentrons-ot3-canbus.service
+    install -d ${D}${sysconfdir}/udev/rules.d/
+    install -m 0644 ${WORKDIR}/95-opentrons-modules.rules ${D}${sysconfdir}/udev/rules.d/95-opentrons-modules.rules
 }
 
-FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d ${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf"
+FILES_${PN}_append = " ${systemd_system_unitdir/opentrons-robot-server.service.d \
+                       ${systemd_system_unitdir}/opentrons-robot-server.service.d/robot-server-version.conf \
+                       ${sysconfdir}/udev/rules.d/95-opentrons-modules.rules \
+                       "
 
-RDEPENDS_${PN} += " python3-numpy python3-systemd nginx python-can python3-pyzmq libgpiod-python"
+RDEPENDS_${PN} += " udev python3-numpy python3-systemd nginx python-can python3-pyzmq libgpiod-python"
 
 inherit pipenv_app_bundle
