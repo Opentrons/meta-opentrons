@@ -16,7 +16,7 @@ on:
 jobs:
   branch-and-build:
     name: 'Ensure a matching branch exists in oe-core then build'
-    runs-on: 'ubuntu-18.04'
+    runs-on: 'ubuntu-latest'
     steps:
       - name: 'Format head ref properly'
         run: |
