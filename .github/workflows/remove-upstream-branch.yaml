@@ -12,7 +12,7 @@ on:
 jobs:
   remove-branch:
     name: 'Remove an automatically-created branch (as long as it has no changes)'
-    runs-on: 'ubuntu-18.04'
+    runs-on: 'ubuntu-latest'
     steps:
       - name: 'Format head ref properly'
         run: |
